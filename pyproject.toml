@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "cnn-realtime"
+version = "0.3.0"
+description = "A realtime Cellular Neural Network video processor - Based on PyCNN and and aiortc server"
+authors = ["csehgabor451 <csehgabor451@gmail.com>"]
+license = "BSD-3-Clause"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+aiohttp = "^3.10.3"
+aiortc = "^1.9.0"
+pillow = "^10.4.0"
+numpy = "^2.0.1"
+av = "^12.3.0"
+scipy = "^1.14.0"
+
+
+[tool.poetry.group.dev.dependencies]
+cython = "^3.0.11"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
