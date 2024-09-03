@@ -1,15 +1,27 @@
-/* @refresh reload */
-import { render } from 'solid-js/web';
+import { lazy } from "solid-js";
+import { render } from "solid-js/web";
+import { Router, Route } from "@solidjs/router";
 
-import './index.css';
-import App from './App';
+// Lazy load the components for different routes
+const Home = lazy(() => import('./pages/Home'));
+const STX = lazy(() => import('./pages/STX'));
+const PhotoCNN = lazy(() => import('./pages/PhotoCNN'));
+const VideoCNN = lazy(() => import('./pages/VideoCNN'));
 
-const root = document.getElementById('root');
+// Define the root App component that wraps the children
+const App = (props) => (
+  <>
+    <h1>My Application</h1>
+    {props.children}
+  </>
+);
 
-if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
-  throw new Error(
-    'Root element not found. Did you forget to add it to your index.html? Or maybe the id attribute got misspelled?',
-  );
-}
-
-render(() => <App />, root);
+// Render the application with the Router and Routes
+render(() => (
+  <Router>
+    <Route path="/" component={Home} />
+    <Route path="/videocnn" component={VideoCNN} />
+    <Route path="/photocnn" component={PhotoCNN} />
+    <Route path="/stx" component={STX} />
+  </Router>
+), document.getElementById("root"));
