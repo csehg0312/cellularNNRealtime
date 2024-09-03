@@ -2,7 +2,7 @@ import animationData from '../assets/upload-to-success.json';
 import { createSignal, onMount } from 'solid-js';
 import lottie from 'lottie-web';
 
-const UploadButton = () => {
+const UploadButton = (props) => {
   let buttonRef;
   let animationContainerRef;
   let animation;
@@ -22,6 +22,11 @@ const UploadButton = () => {
       // add code here to handle what happens after the animation is complete
       console.log('Animation complete!');
     });
+
+    // Call the onClick prop function if it's provided
+    if (props.onClick) {
+      props.onClick();
+    }
   };
 
   return (

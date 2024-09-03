@@ -17,7 +17,7 @@ function PhotoCNN() {
 
   const uploadImage = async () => {
     if (!image()) return;
-
+    console.log("Starting upload");
     setLoading(true);
     const formData = new FormData();
     formData.append("file", image());
@@ -29,6 +29,7 @@ function PhotoCNN() {
       });
 
       if (response.ok) {
+        console.log("Ready to receive");
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
         setOutputImage(url);
@@ -48,10 +49,7 @@ function PhotoCNN() {
       {image() && (
         <div>
           <img src={image()} alt="Captured" style={{ maxWidth: "300px" }} />
-          <UploadButton onClick={uploadImage} disabled={loading()} />
-          {/* <button onClick={uploadImage} disabled={loading()}>
-            {loading() ? "Uploading..." : "Upload Image"}
-          </button> */}
+          <UploadButton onClick={uploadImage} />
         </div>
       )}
       {outputImage() && (
