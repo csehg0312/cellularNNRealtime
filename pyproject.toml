@@ -15,6 +15,7 @@ numpy = "^2.0.1"
 av = "^12.3.0"
 scipy = "^1.14.0"
 opencv-python = "^4.10.0.84"
+google-crc32c = "^1.6.0"
 
 
 [tool.poetry.group.dev.dependencies]
