@@ -1,4 +1,5 @@
 import { createSignal } from "solid-js";
+import UploadButton from "../components/UploadButton";
 
 function PhotoCNN() {
   const [image, setImage] = createSignal(null);
@@ -47,9 +48,10 @@ function PhotoCNN() {
       {image() && (
         <div>
           <img src={image()} alt="Captured" style={{ maxWidth: "300px" }} />
-          <button onClick={uploadImage} disabled={loading()}>
+          <UploadButton onClick={uploadImage} disabled={loading()} />
+          {/* <button onClick={uploadImage} disabled={loading()}>
             {loading() ? "Uploading..." : "Upload Image"}
-          </button>
+          </button> */}
         </div>
       )}
       {outputImage() && (
