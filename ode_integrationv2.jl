@@ -66,7 +66,7 @@ function f!(du, u, p, t)
     end
 end
 
-function solve_ode(image::Matrix{Float64}, Ib::Float64, tempA::Matrix{Float64}, tempB::Matrix{Float64}, t_span::Tuple{Float64,Float64}, initial_condition::Float64)
+function solve_ode(image::Matrix{Float64}, Ib::Float64, tempA::Matrix{Float64}, tempB::Matrix{Float64}, t_span::Vector{Float64}, initial_condition::Float64)
     println("Data arrived to julia")
     n, m = size(image)
 
@@ -79,7 +79,7 @@ function solve_ode(image::Matrix{Float64}, Ib::Float64, tempA::Matrix{Float64}, 
 
     # Set up and solve ODE problem
     println("Started the solving")
-    prob = ODEProblem(f!, z0, t_span, params)
+    prob = ODEProblem(f!, z0, (t_span[1], t_span[end]), params)
     sol = solve(prob, CVODE_BDF(linear_solver=:GMRES), reltol=1e-5, abstol=1e-8, maxiters=1000000)
     println("Ended the solving")
     # Process results

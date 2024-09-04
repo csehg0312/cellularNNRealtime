@@ -17,11 +17,11 @@ jl = Julia(compiled_modules=False)
 # Load the Julia module
 Main.include("ode_integrationv2.jl")
 
-Ib = np.float64(-4.0)
+Ib = np.float64(-1.0)
 tempA = [[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 0.0]]
-tempB = [[-1.0, 0.0, 1.0], [0.0, 1.0, 0.0], [1.0, 0.0, -1.0]]
+tempB = [[-1.0, -1.0, -1.0], [-1.0, 8.0, -1.0], [-1.0, -1.0, -1.0]]
 # t_span = np.linspace(0, 10.0, num=2)
-t_span = np.linspace(0.0, 0.2, num=101)
+t_span = np.linspace(0.0, 10.0, num=2)
 initial_condition = np.float64(0.0)
 
 def cnnCall(image: np.array):

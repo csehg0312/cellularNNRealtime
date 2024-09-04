@@ -68,6 +68,7 @@ async def handle_upload(request):
 
         # Decode the numpy array into an image
         image = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         
         if image is None:
             print("Error: Unable to decode image. The file may be invalid or unsupported.")
