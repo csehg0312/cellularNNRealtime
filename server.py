@@ -8,6 +8,7 @@ from aiortc import RTCPeerConnection, RTCSessionDescription, VideoStreamTrack
 from aiortc.contrib.media import MediaRecorder
 from PIL import Image, UnidentifiedImageError 
 from pathlib import Path
+from cnn_v1 import cnnCall
 
 # Path to the dist directory
 dist_path = Path(__file__).parent / "dist"
@@ -74,8 +75,8 @@ async def handle_upload(request):
         
         print("Image successfully decoded")
 
-        # Process the image (example: convert to grayscale)
-        processed_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+         # Call the Julia ODE solver via the cnnCall function
+        processed_image = cnnCall(image)
 
         # Encode the processed image back to bytes
         success, encoded_image = cv2.imencode('.png', processed_image)
@@ -91,6 +92,7 @@ async def handle_upload(request):
     except Exception as e:
         print(f"Error: {str(e)}")
         return web.Response(status=500, text="Internal server error")
+
 
 async def handle_offer(request):
     params = await request.json()

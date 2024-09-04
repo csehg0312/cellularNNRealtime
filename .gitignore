@@ -1,4 +1,6 @@
 .idx
 venv
 
+__pycache__
+
 dist

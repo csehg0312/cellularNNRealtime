@@ -16,6 +16,9 @@ av = "^12.3.0"
 scipy = "^1.14.0"
 opencv-python = "^4.10.0.84"
 google-crc32c = "^1.6.0"
+psutil = "^6.0.0"
+julia = "^0.6.2"
+pycall = "^2.3.2"
 
 
 [tool.poetry.group.dev.dependencies]
