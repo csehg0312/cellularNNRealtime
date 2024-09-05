@@ -1,10 +1,15 @@
 import { createSignal } from "solid-js";
 import UploadButton from "../components/UploadButton";
 
+function isLocalhost() {
+  return window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+}
+
 function PhotoCNN() {
   const [image, setImage] = createSignal(null);
   const [outputImage, setOutputImage] = createSignal(null);
   const [loading, setLoading] = createSignal(false);
+  const [serverUrl, setServerUrl] = createSignal(isLocalhost() ? "http://localhost:8000/upload" : "http://172.18.94.227:8000/upload");
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -23,7 +28,7 @@ function PhotoCNN() {
     formData.append("file", image());
 
     try {
-      const response = await fetch("http://localhost:8000/upload", {
+      const response = await fetch(serverUrl(), {
         method: "POST",
         body: formData,
       });
