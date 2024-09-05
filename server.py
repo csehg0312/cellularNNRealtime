@@ -76,7 +76,32 @@ async def handle_upload(request):
         
         print("Image successfully decoded")
 
-         # Call the Julia ODE solver via the cnnCall function
+        # Read the selected size field
+        fields = {}
+        while True:
+            field = await reader.next()
+            if field is None:
+                break
+            
+            if field.name in ['keep_original_size', 'size', 'invert_size']:
+                value = await field.read(decode=True)
+                value = value.decode('utf-8')
+                fields[field.name] = value
+            else:
+                break
+
+            
+        keep_original_size = fields.get('keep_original_size')
+        selected_size = fields.get('size')
+        invert_size = fields.get('invert_size')
+        
+        if keep_original_size.lower() == 'false':
+            # Resize the image based on the selected size
+            width, height = map(int, selected_size.split('x'))
+            if invert_size.lower() == 'true':
+                width, height = height, width  # invert sizes
+            image = cv2.resize(image, (width, height))
+        # Call the Julia ODE solver via the cnnCall function
         processed_image = cnnCall(image)
 
         # Encode the processed image back to bytes
@@ -93,7 +118,6 @@ async def handle_upload(request):
     except Exception as e:
         print(f"Error: {str(e)}")
         return web.Response(status=500, text="Internal server error")
-
 
 async def handle_offer(request):
     params = await request.json()

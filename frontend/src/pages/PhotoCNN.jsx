@@ -10,6 +10,9 @@ function PhotoCNN() {
   const [outputImage, setOutputImage] = createSignal(null);
   const [loading, setLoading] = createSignal(false);
   const [serverUrl, setServerUrl] = createSignal(isLocalhost() ? "http://localhost:8000/upload" : "http://172.18.94.227:8000/upload");
+  const [selectedSize, setSelectedSize] = createSignal("320x240"); // default size
+  const [invertSize, setInvertSize] = createSignal(false);
+  const [KeepOriginalSize, setKeepOriginalSize] = createSignal(false);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -20,12 +23,29 @@ function PhotoCNN() {
     }
   };
 
+  const handleSizeChange = (e) => {
+    setSelectedSize(e.target.value);
+  };
+
+  const handleInvertSizeChange = (e) => {
+    setInvertSize(e.target.checked);
+    setKeepOriginalSize(e.target.unchecked);
+  };
+
+  const handleKeepOriginalSize = (e) => {
+    setKeepOriginalSize(e.target.checked);
+    setInvertSize(e.target.unchecked);
+  }
+
   const uploadImage = async () => {
     if (!image()) return;
     console.log("Starting upload");
     setLoading(true);
     const formData = new FormData();
     formData.append("file", image());
+    formData.append("keep_original_size", KeepOriginalSize());
+    formData.append("size", selectedSize());
+    formData.append("invert_size", invertSize());
 
     try {
       const response = await fetch(serverUrl(), {
@@ -49,20 +69,53 @@ function PhotoCNN() {
   };
 
   return (
-    <div>
-      <input type="file" accept="image/*" capture="user" onChange={handleImageChange} />
-      {image() && (
-        <div>
-          <img src={image()} alt="Captured" style={{ maxWidth: "300px" }} />
-          <UploadButton onClick={uploadImage} />
-        </div>
-      )}
-      {outputImage() && (
-        <div>
-          <h3>Output Image:</h3>
-          <img src={outputImage()} alt="Processed" style={{ maxWidth: "300px" }} />
-        </div>
-      )}
+    <div style={{ display: 'flex', gap: '40px' }}>
+      <div>
+        <input type="file" accept="image/*" capture="user" onChange={handleImageChange} />
+        {image() && (
+          <div>
+            <img src={image()} alt="Captured" style={{ maxWidth: "300px" }} />
+            <UploadButton onClick={uploadImage} />
+          </div>
+        )}
+        {outputImage() && (
+          <div>
+            <h3>Output Image:</h3>
+            <img src={outputImage()} alt="Processed" style={{ maxWidth: "300px" }} />
+          </div>
+        )}
+      </div>
+      <div style={{marginLeft: '40px'}}>
+        <h3>Mode: </h3>
+        <select name="settings" id="settings">
+          <option value="option1">Opion 1</option>
+          <option value="option1">Option 1</option>
+          <option value="option1">Option 1</option>
+        </select>
+        <div style={{ marginTop: '20px' }}>
+        <h4>Image size to use:</h4>
+        <select value={selectedSize()} onChange={handleSizeChange}>
+          <option value="320x240">320x240</option>
+          <option value="640x480">640x480</option>
+          <option value="960x540">960x540</option>
+          <option value="1280x720">1280x720</option>
+        </select>
+        <br/>
+        <label title="When checked, the image size will be inverted (e.g. 320x240 becomes 240x320)." htmlFor="#invert_size">Invert the size?</label>
+        <input type="checkbox" name="invert_size" id="invert_size" checked={invertSize()} onChange={handleInvertSizeChange} />
+        <br/>
+        <label title="When checked, the image will not be resized." htmlFor="#keep_original_size">Keep original size?</label>
+        <input type="checkbox" name="keep_original_size" id="keep_original_size" checked={KeepOriginalSize()} onChange={handleKeepOriginalSize} />
+       </div>
+       <div style={{ marginTop: '20px' }}>
+        <h4>Option 3:</h4>
+        <select>
+          <option value="optionX">Option X</option>
+          <option value="optionY">Option Y</option>
+          <option value="optionZ">Option Z</option>
+        </select>
+      </div>
+      </div>
     </div>
   );
 }

@@ -20,6 +20,18 @@ const UploadButton = (props) => {
     animation.addEventListener('complete', () => {
       // add code here to handle what happens after the animation is complete
       console.log('Animation complete!');
+      animation.destroy(); // destroy the animation
+      animationContainerRef.innerHTML = ''; // clear the animation container
+      animation = lottie.loadAnimation({ // reload the animation
+        container: animationContainerRef,
+        animationData,
+        loop: false,
+        autoplay: false,
+        rendererSettings: {
+          scale: 0.5,
+        },
+      });
+      animationContainerRef.style.visibility = 'hidden'; // hide the animation again
     });
   });
 
