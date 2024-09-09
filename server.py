@@ -1,3 +1,6 @@
+from julia.api import Julia
+jl = Julia(compiled_modules=False)
+
 import cv2
 import numpy as np
 import io

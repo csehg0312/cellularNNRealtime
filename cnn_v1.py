@@ -8,11 +8,12 @@ import os
 import psutil
 import time
 
+from julia.api import Julia
+jl = Julia(compiled_modules=False)
+
 ROOT = os.getcwd()
 IMAGES = os.path.join(ROOT, 'image')
 
-# Initialize Julia
-jl = Julia(compiled_modules=False)
 
 # Load the Julia module
 Main.include("ode_integrationv2.jl")

@@ -89,19 +89,46 @@ function Home() {
   return (
     <div class="container mx-auto p-4 pt-6 md:p-6 lg:p-12" style={{ "background-color": '#f0f0f0' }}>
       <Navbar />
-      <h1 class="text-3xl font-bold mb-4">Cellular Neural Network</h1>
-      <p class="text-lg mb-8">A cellular neural network (CNN) is a type of neural network that is inspired by the structure and function of the brain.</p>
-      <p class="text-lg mb-8">Today is {date().toLocaleDateString()}</p>
-      <h2 class="text-2xl font-bold mb-4">What is a Cellular Neural Network?</h2>
-      <p class="text-lg mb-8">A cellular neural network is a type of neural network that is composed of a grid of interconnected cells, or neurons. Each cell receives one or more inputs, performs a computation on those inputs, and then sends the output to other cells.</p>
-      <h2 class="text-2xl font-bold mb-4">How Does it Work?</h2>
-      <p class="text-lg mb-8">The cells in a cellular neural network are arranged in a grid, and each cell is connected to its neighbors. The cells receive inputs from their neighbors, perform a computation on those inputs, and then send the output to other cells.</p>
-      <h2 class="text-2xl font-bold mb-4">Applications</h2>
+      <h1 class="text-3xl font-bold mb-4">Mi az a celluláris neurális hálózat?</h1>
+      <p class="text-lg mb-8">A celluláris neurális hálózat (CNN) egy speciális típusú neurális hálózat, amely az emberi agy struktúráját és működését mintázza. A hagyományos neurális hálózatokkal ellentétben, amelyek rétegekben vannak szervezve, a CNN egy összekapcsolt sejtekből álló rácsot alkot, ahol minden sejt hasonlóan működik, mint az agyban lévő neuron.</p>
+      
+      <h2 class="text-2xl font-bold mb-4">Hogyan Működik?</h2>
+      <p class="text-lg mb-8">A celluláris neurális hálózatban a sejtek két dimenziós rácsban vagy hálózatban vannak elrendezve. Minden sejt kölcsönhatásba lép közvetlen szomszédaival. Az alábbi lépéseket követi:</p>
       <ul class="list-disc pl-4 mb-8">
-        <li>Image processing</li>
-        <li>Pattern recognition</li>
-        <li>Optimization problems</li>
+        <li>
+          <h2 class="text-2xl font-bold mb-4">Bemeneti Adatok Fogadása</h2>
+          <p class="text-lg mb-8" >Minden sejt azonnal szomszédaitól kap bemenetet. Ezek a bemenetek szomszédos sejtektől származhatnak, vagy külső forrástól, ha a rács határfeltételekkel van kialakítva.</p>
+        </li>
+        <li>
+          <h2 class="text-2xl font-bold mb-4">Számítás</h2>
+          <p class="text-lg mb-8" >Minden sejt elvégez egy számítást a kapott bemenetek alapján. Ez a számítás általában bemenetek súlyozott összegeit tartalmazza, majd aktiváló függvény alkalmazásával meghatározza a kimenetet.</p>
+        </li>
+        <li>
+          <h2 class="text-2xl font-bold mb-4">Kimenet Továbbítása</h2>
+          <p class="text-lg mb-8" >Miután kiszámította a kimenetet, minden sejt továbbítja ezt a kimenetet szomszédos sejteinek. Ez a folyamat lehetővé teszi, hogy a hálózat információt terjesszen a rácson keresztül, és a helyi kölcsönhatások alapján alkalmazkodjon.</p>
+        </li>
+        <li>
+          <h2 class="text-2xl font-bold mb-4">Visszacsatolás és Kiegyenlítés</h2>
+          <p class='text-lg mb-8'>A hálózat tartalmazhat visszacsatolási mechanizmusokat, ahol a sejtek az általuk kapott kimenetek alapján módosítják viselkedésüket, lehetővé téve a hálózat számára, hogy alkalmazkodjon és finomítsa feldolgozását idővel.</p>
+        </li>
       </ul>
+      <h2 class="text-2xl font-bold mb-4">Alkalmazások: </h2>
+      <p class='text-lg mb-8'>A celluláris neurális hálózatok különösen hasznosak olyan területeken, ahol a helyi kölcsönhatások és térbeli minták fontosak. Néhány gyakori alkalmazás:</p>
+      <ul class="list-disc pl-4 mb-8">
+        <li>
+          <h2 class="text-2xl font-bold mb-4">Képkezelés</h2>
+          <p class='text-lg mb-8'>A CNN-eket használhatják olyan feladatokhoz, mint a szélvédő-érzékelés, zajcsökkentés és képjavítás, kihasználva a helyi minták feldolgozásának képességét.</p>
+        </li>
+        <li>
+          <h2 class="text-2xl font-bold mb-4">Minta felismerés</h2>
+          <p class='text-lg mb-8'>A CNN-eket használhatják olyan feladatokhoz, mint a szélvédő-érzékelés, zajcsökkentés és képjavítás, kihasználva a helyi minták feldolgozásának képességét.</p>
+        </li>
+        <li>
+          <h2 class="text-2xl font-bold mb-4">Optimalizálási problémák</h2>
+          <p class='text-lg mb-8'>A CNN-ek alkalmazhatók olyan optimalizálási problémákra, ahol a térbeli kapcsolatok és helyi kölcsönhatások kulcsszerepet játszanak, például ütemezésben vagy erőforrás-elosztásban.</p>
+        </li>
+      </ul>
+
     </div>
   );
 }
