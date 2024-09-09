@@ -2,19 +2,23 @@
 .photo-cnn-container {
     display: flex;
     flex-direction: column;
+    align-items: center;
     padding: 10px;
     max-width: 100%;
   }
   
   /* Style for the image upload and preview sections */
   .upload-container {
-    flex: 1 1 100%;
-    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* flex: 1 1 100%; */
+    margin-top: 20px;
   }
   
   .image-preview img,
   .output-preview img {
-    width: 100%;
+    margin-top: 20px;
     height: auto;
     max-width: 100%;
   }
@@ -27,7 +31,13 @@
   
   /* Image size options */
   .image-size-options {
-    margin-top: 20px;
+    margin-top: 10px;
+  }
+  
+  .file-name {
+    margin-top: 10px;
+    font-weight: bold;
+    font-size: 1rem;
   }
   
   label {

@@ -5,8 +5,22 @@ module.exports = {
     './components/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
-    extend: {},
-  },
-  variants: {},
+    extend: {
+      colors: {
+        tangerine: {
+          DEFAULT: '#ff9500',
+          light: '#ff7a00',
+          dark: '#e56e00',
+        },
+      },
+    },
+  }, 
+  variants: {
+    extend: {
+      backgroundColor: ['hover'],
+      textColor: ['hover'],
+      borderColor: ['hover'],
+    },
+  }, 
   plugins: [],
 }

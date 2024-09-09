@@ -8,21 +8,20 @@ const UploadButton = (props) => {
 
   onMount(() => {
     animation = lottie.loadAnimation({
-      container: animationContainerRef, // the dom element that will contain the animation
+      container: animationContainerRef,
       animationData,
-      loop: false, // set loop to false so the animation only plays once
-      autoplay: false, // set autoplay to false so the animation doesn't play automatically
+      loop: false,
+      autoplay: false,
       rendererSettings: {
-        scale: 0.5, // set the animation size to 50% of its original size
+        scale: 0.5,
       },
     });
 
     animation.addEventListener('complete', () => {
-      // add code here to handle what happens after the animation is complete
       console.log('Animation complete!');
-      animation.destroy(); // destroy the animation
-      animationContainerRef.innerHTML = ''; // clear the animation container
-      animation = lottie.loadAnimation({ // reload the animation
+      animation.destroy();
+      animationContainerRef.innerHTML = '';
+      animation = lottie.loadAnimation({
         container: animationContainerRef,
         animationData,
         loop: false,
@@ -31,30 +30,47 @@ const UploadButton = (props) => {
           scale: 0.5,
         },
       });
-      animationContainerRef.style.visibility = 'hidden'; // hide the animation again
+      animationContainerRef.style.visibility = 'hidden';
     });
   });
 
   const handleAnimation = () => {
-    animation.play(); // play the animation when the button is clicked
-    animationContainerRef.style.visibility = 'visible'; // show the animation
+    animation.play();
+    animationContainerRef.style.visibility = 'visible';
     if (props.onClick) {
       props.onClick();
     }
   };
 
   return (
-    <div>
-      <button onClick={handleAnimation}>
+    <div class="flex flex-col items-center">
+      <button
+        type="button"
+        style={{ 
+          "background-color": "#ff9500",
+          "border": '2px solid #e56e00',
+          "color": '#f0f0f0',
+          "padding": '10px 20px',
+          "border-radius": '10px',
+          "font-weight" : 'bold',
+          "cursor":'pointer',
+          "transition": 'backgrouind-color 0.3s ease',
+        }}
+        onMouseEnter={(e) => e.target.style.backgroundColor = '#e56e00'} // Darker tangerine on hover
+        onMouseLeave={(e) => e.target.style.backgroundColor = '#ff9500'} // Revert back to original color
+        class="mt-6 md:mt-10"
+        // class="text-white font-bold py-2 px-4 rounded mt-4 transition-colors duration-300 hover:bg-orange-600"
+        onClick={handleAnimation}
+      >
         Upload File
       </button>
       <div
         style={{
           width: '100px',
           height: '100px',
-          visibility: 'hidden', // hide the animation initially
+          visibility: 'hidden',
         }}
-        ref={el => (animationContainerRef = el)}
+        ref={(el) => (animationContainerRef = el)}
       />
     </div>
   );
