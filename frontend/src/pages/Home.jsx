@@ -22,7 +22,7 @@ function Home() {
   const [date, setDate] = createSignal(new Date('2024-09-03T00:00:00.000Z'));
 
   return (
-    <div class="container mx-auto p-4 pt-6 md:p-6 lg:p-12">
+    <div class="container mx-auto p-4 pt-6 md:p-6 lg:p-12" style={{ "background-color": '#f0f0f0' }}>
       <Navbar />
       <h1 class="text-3xl font-bold mb-4">Cellular Neural Network</h1>
       <p class="text-lg mb-8">A cellular neural network (CNN) is a type of neural network that is inspired by the structure and function of the brain.</p>
