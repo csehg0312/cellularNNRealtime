@@ -1,360 +1,342 @@
-//importing styles
-import { createSignal, onMount } from "solid-js";
-import "./VideoCNN.module.css";
-import { Router } from "@solidjs/router";
+import { createSignal, createEffect, onCleanup, onMount, For } from 'solid-js';
 
-//main function
-function VideoCNN() {
-    // let dataChannelRef;
-    // let iceConnectionRef;
-    // let iceGatheringRef;
-    // let singnalingRef;
-    let stunRef;
-    let codecRef;
-    let transformRef;
-    let datachannnelRef;
-    let startRef;
-    let stopRef;
-    let videoInputRef;
-    let videoResRef;
-    let mediaRef;
+const VideoCNN = () => {
+  const [dataChannelLog, setDataChannelLog] = createSignal('');
+  const [iceConnectionLog, setIceConnectionLog] = createSignal('');
+  const [iceGatheringLog, setIceGatheringLog] = createSignal('');
+  const [signalingLog, setSignalingLog] = createSignal('');
+  const [offerSdp, setOfferSdp] = createSignal('');
+  const [answerSdp, setAnswerSdp] = createSignal('');
+  const [showStart, setShowStart] = createSignal(true);
+  const [showStop, setShowStop] = createSignal(false);
+  const [showMedia, setShowMedia] = createSignal(false);
+  
+  // New state variables for media devices
+  const [audioInputs, setAudioInputs] = createSignal([]);
+  const [videoInputs, setVideoInputs] = createSignal([]);
+  const [selectedAudioInput, setSelectedAudioInput] = createSignal('');
+  const [selectedVideoInput, setSelectedVideoInput] = createSignal('');
 
-    const [pc, setPc] = createSignal(null);
-    const [iceGatheringLog, setIceGatheringLog] = createSignal("");
-    const [iceConnectionLog, setIceConnectionLog] = createSignal("");
-    const [signalingLog, setSignalingLog] = createSignal("");
-    const [offerSdp, setOfferSdp] = createSignal("");
-    const [answerSdp, setAnswerSdp] = createSignal("");
-    const [dataChannelLog, setDataChannelLog] = createSignal("");
-    const [dc, setDc] = createSignal(null);
-    const [dcInterval, setDcInterval] = createSignal(null);
-    const [timeStart, setTimeStart] = createSignal(null);
+  let pc = null;
+  let dc = null;
+  let dcInterval = null;
 
-    const [videoDevices, setVideoDevices] = createSignal([]);
-    let [videoDeviceId, setVideoDeviceId] = createSignal("");
+  const createPeerConnection = () => {
+    const config = {
+      sdpSemantics: 'unified-plan',
+      iceServers: document.getElementById('use-stun').checked
+        ? [{ urls: ['stun:stun.l.google.com:19302'] }]
+        : [],
+    };
 
-    onMount(() => {
-        navigator.mediaDevices
-            .enumerateDevices()
-            .then((devices) => {
-                const videoInputs = devices.filter(
-                    (device) => device.kind === "videoinput",
-                );
-                // console.log(videoInputs);
-                setVideoDevices(videoInputs);
-            })
-            .catch((e) => {
-                alert(e);
-            });
+    pc = new RTCPeerConnection(config);
 
-        // const negotiate = async () => {
-        //
-        // };
+    pc.addEventListener('icegatheringstatechange', () => {
+      setIceGatheringLog(prev => prev + ' -> ' + pc.iceGatheringState);
     });
 
-    const negotiate = async () => {
-        try {
-            const offer = await peerConnection.createOffer();
-            await peerConnection.setLocalDescription(offer);
+    pc.addEventListener('iceconnectionstatechange', () => {
+      setIceConnectionLog(prev => prev + ' -> ' + pc.iceConnectionState);
+    });
 
-            await new Promise((resolve) => {
-                if (peerConnection.iceGatheringState === "complete") {
-                    resolve();
-                } else {
-                    function checkState() {
-                        if (peerConnection.iceGatheringState === "complete") {
-                            peerConnection.removeEventListener(
-                                "icegatheringstatechange",
-                                checkState(),
-                            );
-                            resolve();
-                        }
-                    }
-                    peerConnection.addEventListener(
-                        "icegatheringstatechange",
-                        checkState(),
-                    );
-                }
-            });
+    pc.addEventListener('signalingstatechange', () => {
+      setSignalingLog(prev => prev + ' -> ' + pc.signalingState);
+    });
 
-            const localDescription = peerConnection.localDescription;
-            let codec;
+    pc.addEventListener('track', (evt) => {
+      if (evt.track.kind === 'video') {
+        document.getElementById('video').srcObject = evt.streams[0];
+      } else {
+        document.getElementById('audio').srcObject = evt.streams[0];
+      }
+    });
 
-            codec = codecRef.value;
-            if (codec !== "default") {
-                localDescription.sdp = sdpFilterCodec(
-                    "video",
-                    codec,
-                    localDescription.sdp,
-                );
+    return pc;
+  };
+
+  const enumerateInputDevices = async () => {
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const audioInputDevices = devices.filter(device => device.kind === 'audioinput');
+      const videoInputDevices = devices.filter(device => device.kind === 'videoinput');
+
+      setAudioInputs(audioInputDevices);
+      setVideoInputs(videoInputDevices);
+
+      if (audioInputDevices.length > 0) {
+        setSelectedAudioInput(audioInputDevices[0].deviceId);
+      }
+      if (videoInputDevices.length > 0) {
+        setSelectedVideoInput(videoInputDevices[0].deviceId);
+      }
+    } catch (e) {
+      console.error('Error enumerating devices:', e);
+    }
+  };
+
+  const negotiate = async () => {
+    try {
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+
+      await new Promise((resolve) => {
+        if (pc.iceGatheringState === 'complete') {
+          resolve();
+        } else {
+          const checkState = () => {
+            if (pc.iceGatheringState === 'complete') {
+              pc.removeEventListener('icegatheringstatechange', checkState);
+              resolve();
             }
-
-            setOfferSdp(localDescription.sdp);
-
-            const response = await fetch("/offer", {
-                body: JSON.stringify({
-                    sdp: localDescription.sdp,
-                    type: localDescription.type,
-                    video_transform: transformRef.value,
-                }),
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                method: "POST",
-            });
-
-            const answer = await response.json();
-            setAnswerSdp(answer.sdp);
-            await peerConnection.setRemoteDescription(answer);
-        } catch (e) {
-            alert(e);
+          };
+          pc.addEventListener('icegatheringstatechange', checkState);
         }
+      });
+
+      const localDesc = pc.localDescription;
+      let sdp = localDesc.sdp;
+
+      const audioCodec = document.getElementById('audio-codec').value;
+      if (audioCodec !== 'default') {
+        sdp = sdpFilterCodec('audio', audioCodec, sdp);
+      }
+
+      const videoCodec = document.getElementById('video-codec').value;
+      if (videoCodec !== 'default') {
+        sdp = sdpFilterCodec('video', videoCodec, sdp);
+      }
+
+      setOfferSdp(sdp);
+
+      const response = await fetch('/offer', {
+        body: JSON.stringify({
+          sdp: sdp,
+          type: localDesc.type,
+          video_transform: document.getElementById('video-transform').value,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+      });
+
+      const answer = await response.json();
+      setAnswerSdp(answer.sdp);
+      await pc.setRemoteDescription(answer);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const start = async () => {
+    setShowStart(false);
+    pc = createPeerConnection();
+
+    let timeStart = null;
+
+    const currentStamp = () => {
+      if (timeStart === null) {
+        timeStart = new Date().getTime();
+        return 0;
+      } else {
+        return new Date().getTime() - timeStart;
+      }
     };
 
-    const createPeerConnection = () => {
-        const config = {
-            sdpSemantics: "unified-plan",
-        };
+    if (document.getElementById('use-datachannel').checked) {
+      const parameters = JSON.parse(document.getElementById('datachannel-parameters').value);
+      dc = pc.createDataChannel('chat', parameters);
 
-        if (stunRef.checked) {
-            config.iceServers = [{ urls: ["stun:stun.l.google.com:19302"] }];
+      dc.addEventListener('close', () => {
+        clearInterval(dcInterval);
+        setDataChannelLog(prev => prev + '- close\n');
+      });
+
+      dc.addEventListener('open', () => {
+        setDataChannelLog(prev => prev + '- open\n');
+        dcInterval = setInterval(() => {
+          const message = `ping ${currentStamp()}`;
+          setDataChannelLog(prev => prev + `> ${message}\n`);
+          dc.send(message);
+        }, 1000);
+      });
+
+      dc.addEventListener('message', (evt) => {
+        setDataChannelLog(prev => prev + `< ${evt.data}\n`);
+        if (evt.data.substring(0, 4) === 'pong') {
+          const elapsedMs = currentStamp() - parseInt(evt.data.substring(5), 10);
+          setDataChannelLog(prev => prev + ` RTT ${elapsedMs} ms\n`);
         }
+      });
+    }
 
-        const peerConnection = new RTCPeerConnection(config);
-        setPc(peerConnection);
+    const constraints = {
+      audio: document.getElementById('use-audio').checked,
+      video: document.getElementById('use-video').checked,
+    };
 
-        peerConnection.addEventListener(
-            "icegatheringstatechange",
-            () => {
-                setIceGatheringLog(
-                    iceGatheringLog() +
-                        " -> " +
-                        peerConnection.iceGatheringState,
-                );
-            },
-            false,
-        );
-        setIceGatheringLog(peerConnection.iceGatheringState);
+    if (constraints.audio) {
+      constraints.audio = { deviceId: { exact: selectedAudioInput() } };
+    }
 
-        peerConnection.addEventListener(
-            "iceconnectionstatechange",
-            () => {
-                setIceConnectionLog(
-                    iceConnectionLog() +
-                        " -> " +
-                        peerConnection.iceConnectionState,
-                );
-            },
-            false,
-        );
-        setIceConnectionLog(peerConnection.iceConnectionState);
+    if (constraints.video) {
+      constraints.video = { deviceId: { exact: selectedVideoInput() } };
 
-        peerConnection.addEventListener(
-            "signalingstatechange",
-            () => {
-                setSignalingLog(
-                    signalingLog() + " -> " + peerConnection.signalingState,
-                );
-            },
-            false,
-        );
-        setSignalingLog(peerConnection.signalingState);
+      const resolution = document.getElementById('video-resolution').value;
+      if (resolution) {
+        const [width, height] = resolution.split('x').map(Number);
+        constraints.video = { ...constraints.video, width, height };
+      }
+    }
 
-        peerConnection.addEventListener("track", (evt) => {
-            document.getElementById("video").srcObject = evt.streams[0];
+    if (constraints.audio || constraints.video) {
+      if (constraints.video) {
+        setShowMedia(true);
+      }
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        stream.getTracks().forEach(track => {
+          pc.addTrack(track, stream);
         });
-    };
+        await negotiate();
+      } catch (err) {
+        console.error('Could not acquire media:', err);
+      }
+    } else {
+      await negotiate();
+    }
 
-    const start = () => {
-        startRef.style.display = "none";
+    setShowStop(true);
+  };
 
-        const peerConnection = createPeerConnection();
-        setPc(peerConnection);
+  const stop = () => {
+    setShowStop(false);
 
-        // var start_time = null;
+    if (dc) {
+      dc.close();
+    }
 
-        const currentStamp = () => {
-            if (timeStart() === null) {
-                setTimeStart(new Date().getTime());
-                return 0;
-            } else {
-                return new Date().getTime() - timeStart();
+    if (pc.getTransceivers) {
+      pc.getTransceivers().forEach(transceiver => {
+        if (transceiver.stop) {
+          transceiver.stop();
+        }
+      });
+    }
+
+    pc.getSenders().forEach(sender => {
+      sender.track.stop();
+    });
+
+    setTimeout(() => {
+      pc.close();
+    }, 500);
+  };
+
+  const sdpFilterCodec = (kind, codec, realSdp) => {
+    var allowed = []
+    var rtxRegex = new RegExp('a=fmtp:(\\d+) apt=(\\d+)\r$');
+    var codecRegex = new RegExp('a=rtpmap:([0-9]+) ' + escapeRegExp(codec))
+    var videoRegex = new RegExp('(m=' + kind + ' .*?)( ([0-9]+))*\\s*$')
+
+    var lines = realSdp.split('\n');
+
+    var isKind = false;
+    for (var i = 0; i < lines.length; i++) {
+        if (lines[i].startsWith('m=' + kind + ' ')) {
+            isKind = true;
+        } else if (lines[i].startsWith('m=')) {
+            isKind = false;
+        }
+
+        if (isKind) {
+            var match = lines[i].match(codecRegex);
+            if (match) {
+                allowed.push(parseInt(match[1]));
             }
-        };
 
-        if (datachannnelRef.checked) {
-            const params = JSON.parse(datachannnelRef.value);
-
-            const dataChannel = peerConnection.createDataChannel(
-                "chat",
-                params,
-            );
-            setDc(dataChannel);
-
-            dataChannel.addEventListener("close", () => {
-                clearInterval(dcInterval());
-                setDataChannelLog(dataChannelLog() + "- close\n");
-            });
-
-            dataChannel.addEventListener("open", () => {
-                setDataChannelLog(dataChannelLog() + "- open\n");
-                setDcInterval(
-                    setInterval(() => {
-                        const message = "ping " + currentStamp();
-                        setDataChannelLog(
-                            dataChannelLog() + ">" + message + "\n",
-                        );
-                        dataChannel.send(message);
-                    }, 1000),
-                );
-            });
-
-            dataChannel.addEventListener("message", (evt) => {
-                setDataChannelLog(dataChannelLog() + "<" + evt.data + "\n");
-
-                if (evt.data.substring(0, 4) === "pong") {
-                    const elapsedMs =
-                        currentStamp() - parseInt(evt.data.substring(5), 10);
-                    setDataChannelLog(
-                        dataChannelLog() + " RTT" + elapsedMs + "ms/n",
-                    );
-                }
-            });
+            match = lines[i].match(rtxRegex);
+            if (match && allowed.includes(parseInt(match[2]))) {
+                allowed.push(parseInt(match[1]));
+            }
         }
+    }
+  };
 
-        const constraints = {
-            video: false,
-        };
+  onMount(() => {
+    enumerateInputDevices();
+  });
 
-        const videoConstraints = {};
+  onCleanup(() => {
+    if (dc) {
+      dc.close();
+    }
+    if (pc) {
+      pc.close();
+    }
+  });
 
-        const device = videoInputRef.value;
-        if (device) {
-            videoConstraints.deviceId = { exact: device };
-        }
-
-        const resolution = videoResRef.value;
-        if (resolution) {
-            const dimensions = resolution.split("x");
-            videoConstraints.width = parseInt(dimensions[0], 0);
-            videoConstraints.height = parseInt(dimensions[1], 0);
-        }
-        constraints.video = Object.keys(videoConstraints).length
-            ? videoConstraints
-            : true;
-
-        if (constraints.video) {
-            mediaRef.style.display = "block";
-        }
-        Navigator.mediaDevices.getUserMedia(constraints).then(
-            (stream) => {
-                stream.getTracks().forEach((track) => {
-                    peerConnection.addTrack(track, stream);
-                });
-                return negotiate();
-            },
-            (err) => {
-                alert("Could not acquire media: " + err);
-            },
-        );
-    };
-
-    return (
-        <div id="container">
-            <div class="option">
-                <input
-                    id="use-datachannel"
-                    checked="checked"
-                    type="checkbox"
-                    ref={datachannnelRef}
-                />
-                <label for="use-datachennel">Use datachennel</label>
-
-                <select id="datachannel-params">
-                    <option value={{ ordered: true }}>Ordered, reliable</option>
-                    <option value={{ ordered: false, maxRetransmits: 0 }}>
-                        Unordered, no retransmissions
-                    </option>
-                    <option value={{ ordered: false, maxPacketLifetime: 500 }}>
-                        Unordered, 500ms lifetime
-                    </option>
-                </select>
-            </div>
-            <div class="option">
-                <select value={videoDeviceId()} ref={videoInputRef}>
-                    {videoDevices().map((device, index) => (
-                        <option value={device.deviceId}>
-                            {device.label || `Device #${index + 1}`}
-                        </option>
-                    ))}
-                    <option value="" selected>
-                        Default device
-                    </option>
-                </select>
-                <select id="video-resolution" ref={videoResRef}>
-                    <option value="" selected>
-                        Default resolution
-                    </option>
-                    <option value="320x240">320x240</option>
-                    <option value="640x480">640x480</option>
-                    <option value="960x540">960x540</option>
-                    <option value="1280x720">1280x720</option>
-                </select>
-                <select id="video-transform" ref={transformRef}>
-                    <option value="none" selected>
-                        No transform
-                    </option>
-                    <option value="cnn">Cellular neural network</option>
-                </select>
-                <select id="video-codec" ref={codecRef}>
-                    <option value="default" selected>
-                        Default codecs
-                    </option>
-                    <option value="VP8/90000">VP8</option>
-                    <option value="H264/90000">H264</option>
-                </select>
-            </div>
-            <div class="option">
-                <input ref={stunRef} id="use-stun" type="checkbox" />
-                <label for="use-stun">Use STUN server</label>
-            </div>
-
-            <button ref={startRef} id="start" onClick={start}>
-                Start
-            </button>
-            <button id="stop" ref={stopRef} style="display: none" onClick={stop}>
-                Stop
-            </button>
-
-            <h2>State</h2>
-            <p>
-                ICE gathering state: <span id="ice-gathering-state"></span>
-            </p>
-            <p>
-                ICE connection state: <span id="ice-connection-state"></span>
-            </p>
-            <p>
-                Signaling state: <span id="signaling-state"></span>
-            </p>
-
-            <div id="media" style="display: none" ref={mediaRef}>
-                <h2>Media</h2>
-
-                <video id="video" autoplay="true" playsinline="true"></video>
-            </div>
-
-            <h2>Data channel</h2>
-            <pre id="data-channel" style="height: 200px;"></pre>
-
-            <h2>SDP</h2>
-
-            <h3>Offer</h3>
-            <pre id="offer-sdp"></pre>
-
-            <h3>Answer</h3>
-            <pre id="answer-sdp"></pre>
+  return (
+    <div>
+      <h2>WebRTC</h2>
+      <div>
+        <h3>Media Devices</h3>
+        <div>
+          <label for="audio-input">Audio Input: </label>
+          <select
+            id="audio-input"
+            value={selectedAudioInput()}
+            onChange={(e) => setSelectedAudioInput(e.target.value)}
+          >
+            <For each={audioInputs()}>
+              {(device) => (
+                <option value={device.deviceId}>
+                  {device.label || `Audio Device ${device.deviceId.substr(0, 5)}`}
+                </option>
+              )}
+            </For>
+          </select>
         </div>
-    );
-}
+        <div>
+          <label for="video-input">Video Input: </label>
+          <select
+            id="video-input"
+            value={selectedVideoInput()}
+            onChange={(e) => setSelectedVideoInput(e.target.value)}
+          >
+            <For each={videoInputs()}>
+              {(device) => (
+                <option value={device.deviceId}>
+                  {device.label || `Video Device ${device.deviceId.substr(0, 5)}`}
+                </option>
+              )}
+            </For>
+          </select>
+        </div>
+      </div>
+      <div>
+        <button onClick={start} style={{ display: showStart() ? 'inline-block' : 'none' }}>Start</button>
+        <button onClick={stop} style={{ display: showStop() ? 'inline-block' : 'none' }}>Stop</button>
+      </div>
+      <h3>Data Channel</h3>
+      <pre id="data-channel">{dataChannelLog()}</pre>
+      <h3>ICE Connection State</h3>
+      <p id="ice-connection-state">{iceConnectionLog()}</p>
+      <h3>ICE Gathering State</h3>
+      <p id="ice-gathering-state">{iceGatheringLog()}</p>
+      <h3>Signaling State</h3>
+      <p id="signaling-state">{signalingLog()}</p>
+      <h3>SDP Offer</h3>
+      <pre id="offer-sdp">{offerSdp()}</pre>
+      <h3>SDP Answer</h3>
+      <pre id="answer-sdp">{answerSdp()}</pre>
+      <div id="media" style={{ display: showMedia() ? 'block' : 'none' }}>
+        <h3>Media</h3>
+        <audio id="audio" autoplay="true"></audio>
+        <video id="video" autoplay="true" playsinline="true"></video>
+      </div>
+    </div>
+  );
+};
 
 export default VideoCNN;
