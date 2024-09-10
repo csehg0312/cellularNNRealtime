@@ -1,60 +1,15 @@
 import { createComponent, createSignal } from 'solid-js';
-
-// function useDarkMode() {
-//   const [isDarkMode, setIsDarkMode] = createSignal(window.matchMedia('(prefers-color-scheme: dark)').matches);
-
-//   // Update the dark mode signal when the user changes their preference
-//   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-//     setIsDarkMode(e.matches);
-//   });
-
-//   return isDarkMode;
-// }
-
-// function Navbar({ isDarkMode }) {
-//   return (
-//     <nav class={`py-4 ${isDarkMode ? 'bg-gray-800 text-white shadow-md' : 'bg-white text-gray-800 border border-gray-200 shadow-sm'}`}>
-//       <div class="container mx-auto flex justify-between items-center px-4">
-//         <ul class="flex space-x-4">
-//           <li>
-//             <a
-//               href="/photocnn"
-//               class={`border-b-2 pb-2 transition-colors ${isDarkMode ? 'text-gray-300 hover:text-orange-500 border-transparent hover:border-orange-500' : 'text-gray-800 hover:text-orange-600 border-gray-300 hover:border-orange-600'}`}
-//             >
-//               Photo CNN
-//             </a>
-//           </li>
-//           <li>
-//             <a
-//               href="/videocnn"
-//               class={`border-b-2 pb-2 transition-colors ${isDarkMode ? 'text-gray-300 hover:text-orange-500 border-transparent hover:border-orange-500' : 'text-gray-800 hover:text-orange-600 border-gray-300 hover:border-orange-600'}`}
-//             >
-//               VideoCNN
-//             </a>
-//           </li>
-//           <li>
-//             <a
-//               href="/stx"
-//               class={`border-b-2 pb-2 transition-colors ${isDarkMode ? 'text-gray-300 hover:text-orange-500 border-transparent hover:border-orange-500' : 'text-gray-800 hover:text-orange-600 border-gray-300 hover:border-orange-600'}`}
-//             >
-//               Set parameters
-//             </a>
-//           </li>
-//         </ul>
-//       </div>
-//     </nav>
-//   );
-// }
+import styles from './Home.module.css';
 
 function Navbar() {
   return (
-    <nav class="py-4 bg-white text-black border border-gray-200 shadow-sm">
+    <nav class="py-4 bg-black text-gray border border-gray-200 shadow-sm">
       <div class="container mx-auto flex justify-between items-center px-4">
         <ul class="flex space-x-4">
           <li>
             <a
               href="/photocnn"
-              class="border-b-2 pb-2 transition-colors text-black hover:text-orange-600 border-gray-300 hover:border-orange-600"
+              class="border-b-2 pb-2 transition-colors text-white hover:text-orange-600 border-gray-300 hover:border-orange-600"
             >
               Photo CNN
             </a>
@@ -62,7 +17,7 @@ function Navbar() {
           <li>
             <a
               href="/videocnn"
-              class="border-b-2 pb-2 transition-colors text-black hover:text-orange-600 border-gray-300 hover:border-orange-600"
+              class="border-b-2 pb-2 transition-colors text-white hover:text-orange-600 border-gray-300 hover:border-orange-600"
             >
               VideoCNN
             </a>
@@ -70,7 +25,7 @@ function Navbar() {
           <li>
             <a
               href="/stx"
-              class="border-b-2 pb-2 transition-colors text-black hover:text-orange-600 border-gray-300 hover:border-orange-600"
+              class="border-b-2 pb-2 transition-colors text-white hover:text-orange-600 border-gray-300 hover:border-orange-600"
             >
               Set parameters
             </a>
@@ -83,11 +38,10 @@ function Navbar() {
 
 
 function Home() {
-  const [date, setDate] = createSignal(new Date('2024-09-03T00:00:00.000Z'));
- 
 
   return (
-    <div class="container mx-auto p-4 pt-6 md:p-6 lg:p-12" style={{ "background-color": '#f0f0f0' }}>
+    // class="container mx-auto p-4 pt-6 md:p-6 lg:p-12"
+    <div className={`${styles.container} mx-auto p-4 pt-6 md:p-6 lg:p-12`}>
       <Navbar />
       <h1 class="text-3xl font-bold mb-4">Mi az a celluláris neurális hálózat?</h1>
       <p class="text-lg mb-8">A celluláris neurális hálózat (CNN) egy speciális típusú neurális hálózat, amely az emberi agy struktúráját és működését mintázza. A hagyományos neurális hálózatokkal ellentétben, amelyek rétegekben vannak szervezve, a CNN egy összekapcsolt sejtekből álló rácsot alkot, ahol minden sejt hasonlóan működik, mint az agyban lévő neuron.</p>
