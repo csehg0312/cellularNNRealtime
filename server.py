@@ -3,40 +3,21 @@ jl = Julia(compiled_modules=False)
 
 import cv2
 import numpy as np
-import io
 import asyncio
 import base64
 from aiohttp import web
-from aiortc import RTCPeerConnection, RTCSessionDescription, VideoStreamTrack
-from aiortc.contrib.media import MediaRecorder
+from aiortc import RTCPeerConnection, RTCSessionDescription, MediaStreamTrack
+from aiortc.contrib.media import MediaRecorder, MediaRelay, MediaPlayer, MediaBlackhole
 from PIL import Image, UnidentifiedImageError 
 from pathlib import Path
 from cnn_v1 import cnnCall
+from av import VideoFrame
+from use_rtc import handle_offer, on_shutdown, process_frames
 
 # Path to the dist directory
 dist_path = Path(__file__).parent / "dist"
-
-class ImageProcessorTrack(VideoStreamTrack):
-    """
-    A video track that applies image processing to the frames it receives.
-    """
-    def __init__(self, track):
-        super().__init__()  # Initializes the base VideoStreamTrack class
-        self.track = track
-
-    async def recv(self):
-        frame = await self.track.recv()
-
-        # Convert frame to image
-        img = frame.to_ndarray(format="bgr24")
-
-        # Apply image processing (e.g., grayscale)
-        processed_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-        # Convert back to VideoFrame
-        new_frame = VideoStreamTrack.from_ndarray(processed_img, format="gray")
-
-        return new_frame
+pcs = set()
+relay = MediaRelay()
 
 async def handle_upload(request):
     try:
@@ -122,62 +103,25 @@ async def handle_upload(request):
         print(f"Error: {str(e)}")
         return web.Response(status=500, text="Internal server error")
 
-async def handle_offer(request):
-    params = await request.json()
-    offer = RTCSessionDescription(sdp=params['sdp'], type=params['type'])
-
-    pc = RTCPeerConnection()
-
-    # Recorder to save received video to a file
-    recorder = MediaRecorder("received.mp4")
-
-    @pc.on("datachannel")
-    def on_datachannel(channel):
-        @channel.on("message")
-        async def on_message(message):
-            print(f"Received message: {message}")
-            if message == "BYE":
-                await recorder.stop()
-
-    @pc.on("iceconnectionstatechange")
-    async def on_iceconnectionstatechange():
-        print(f"ICE connection state is {pc.iceConnectionState}")
-        if pc.iceConnectionState == "failed":
-            await pc.close()
-
-    @pc.on("track")
-    def on_track(track):
-        if track.kind == "video":
-            pc.addTrack(ImageProcessorTrack(track))
-            recorder.addTrack(track)
-
-        @track.on("ended")
-        async def on_ended():
-            print("Track ended")
-            await recorder.stop()
-
-    await pc.setRemoteDescription(offer)
-    answer = await pc.createAnswer()
-    await pc.setLocalDescription(answer)
-
-    return web.json_response({
-        'sdp': pc.localDescription.sdp,
-        'type': pc.localDescription.type
-    })
-
 # Serve static files from the dist/assets directory
 app = web.Application()
 app.router.add_post('/upload', handle_upload)
 app.router.add_post('/offer', handle_offer)
+app['pcs'] = set()
 
 # Serve static assets from dist/assets
 app.router.add_static('/assets/', path=dist_path / 'assets', name='assets')
+
+app.on_shutdown.append(on_shutdown)
 
 # Serve the main index.html
 async def handle_index(request):
     return web.FileResponse(dist_path / "index.html")
 
 app.router.add_get('/', handle_index)
+
+# Start frame processing
+asyncio.get_event_loop().create_task(process_frames())
 
 if __name__ == '__main__':
     web.run_app(app, port=8000)

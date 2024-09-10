@@ -1,17 +1,23 @@
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   mode: 'jit',
   content: [
+    './src/**/*.{js,jsx,ts,tsx,html}', 
     './pages/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
   ],
+  
   theme: {
     extend: {
       colors: {
-        tangerine: {
-          DEFAULT: '#ff9500',
-          light: '#ff7a00',
-          dark: '#e56e00',
-        },
+        // darkGray: '#1F1F1F',
+        // navyBlue: '#0D1B2A',
+        // graphite: '#2C2C2C',
+        // white: '#f0f0f0',
+        // amber: '#FFC107',
+        // goldenYellow: '#FFB400',
+        // deepOrange: '#FF5722',
+        // tangerine: '#FF6F00',
       },
     },
   }, 
@@ -23,4 +29,10 @@ module.exports = {
     },
   }, 
   plugins: [],
+  // safelist: [
+  //   {
+  //     pattern:
+  //       /(bg|text|border)-(darkGray|navyBlue|white|graphite|amber|goldenYellow|deepOrange|tangerine)/,
+  //   },
+  // ],
 }

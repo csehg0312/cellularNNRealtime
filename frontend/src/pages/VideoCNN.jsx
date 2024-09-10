@@ -205,7 +205,33 @@ const WebRTCComponent = () => {
   };
 
   const sdpFilterCodec = (kind, codec, realSdp) => {
-    // ... (Same implementation as in the original code)
+    var allowed = []
+    var rtxRegex = new RegExp('a=fmtp:(\\d+) apt=(\\d+)\r$');
+    var codecRegex = new RegExp('a=rtpmap:([0-9]+) ' + escapeRegExp(codec))
+    var videoRegex = new RegExp('(m=' + kind + ' .*?)( ([0-9]+))*\\s*$')
+
+    var lines = realSdp.split('\n');
+
+    var isKind = false;
+    for (var i = 0; i < lines.length; i++) {
+        if (lines[i].startsWith('m=' + kind + ' ')) {
+            isKind = true;
+        } else if (lines[i].startsWith('m=')) {
+            isKind = false;
+        }
+
+        if (isKind) {
+            var match = lines[i].match(codecRegex);
+            if (match) {
+                allowed.push(parseInt(match[1]));
+            }
+
+            match = lines[i].match(rtxRegex);
+            if (match && allowed.includes(parseInt(match[2]))) {
+                allowed.push(parseInt(match[1]));
+            }
+        }
+    }
   };
 
   onMount(() => {
@@ -227,6 +253,7 @@ const WebRTCComponent = () => {
       <div>
         <h3>Video Devices</h3>
         <div>
+        <input type='checkbox' id='use-stun'>Use stun</input> 
           <label for="video-input">Video Input: </label>
           <select
             id="video-input"
