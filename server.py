@@ -67,17 +67,18 @@ async def handle_upload(request):
             if field is None:
                 break
             
-            if field.name in ['keep_original_size', 'size', 'invert_size']:
+            if field.name in ['keep_original_size', 'size', 'invert_size', 'mode']:
                 value = await field.read(decode=True)
                 value = value.decode('utf-8')
                 fields[field.name] = value
             else:
                 break
 
-            
+        print(fields)
         keep_original_size = fields.get('keep_original_size')
         selected_size = fields.get('size')
         invert_size = fields.get('invert_size')
+        selected_mode = fields.get('mode', 'default_mode_')
         
         if keep_original_size.lower() == 'false':
             # Resize the image based on the selected size
@@ -86,7 +87,7 @@ async def handle_upload(request):
                 width, height = height, width  # invert sizes
             image = cv2.resize(image, (width, height))
         # Call the Julia ODE solver via the cnnCall function
-        processed_image = cnnCall(image)
+        processed_image = cnnCall(image, selected_mode)
 
         # Encode the processed image back to bytes
         success, encoded_image = cv2.imencode('.png', processed_image)

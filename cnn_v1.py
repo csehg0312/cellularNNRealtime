@@ -7,6 +7,8 @@ import os.path
 import os
 import psutil
 import time
+import pickle
+import gc
 
 from julia.api import Julia
 jl = Julia(compiled_modules=False)
@@ -14,31 +16,45 @@ jl = Julia(compiled_modules=False)
 ROOT = os.getcwd()
 IMAGES = os.path.join(ROOT, 'image')
 
+def load_parameters_for_mode(mode):
+    with open('settings.pkl', 'rb') as f:
+        settings = pickle.load(f)
+    return {
+        'tempA': settings[f'{mode}A'],
+        'tempB': settings[f'{mode}B'],
+        't_span': settings[f'{mode}t'],
+        'Ib': settings[f'{mode}Ib'],
+        'initial_condition': settings[f'{mode}init']
+    }
 
 # Load the Julia module
 Main.include("ode_integrationv2.jl")
 
-Ib = np.float64(-1.0)
-tempA = [[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 0.0]]
-tempB = [[-1.0, -1.0, -1.0], [-1.0, 8.0, -1.0], [-1.0, -1.0, -1.0]]
-# t_span = np.linspace(0, 10.0, num=2)
-t_span = np.linspace(0.0, 10.0, num=2)
-initial_condition = np.float64(0.0)
+# Ib = np.float64(-1.0)
+# tempA = [[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 0.0]]
+# tempB = [[-1.0, -1.0, -1.0], [-1.0, 8.0, -1.0], [-1.0, -1.0, -1.0]]
+# # t_span = np.linspace(0, 10.0, num=2)
+# t_span = np.linspace(0.0, 10.0, num=2)
+# initial_condition = np.float64(0.0)
 
-def cnnCall(image: np.array):
+def cnnCall(image: np.array, mode:str):
     u = np.array(image, dtype=np.float64)
+    
+    parameters = load_parameters_for_mode(mode)
     
     print(f"Total system memory: {psutil.virtual_memory().total / (1024**3):.2f} GB")
     print(f"Available memory: {psutil.virtual_memory().available / (1024**3):.2f} GB")
     print(f"CPU usage: {psutil.cpu_percent()}%")
 
     start_time = time.time()
-    result = Main.solve_ode(u, Ib, tempA, tempB, t_span, initial_condition)
+    result = Main.solve_ode(u, parameters['Ib'], parameters['tempA'], parameters['tempB'], parameters['t_span'], parameters['initial_condition'])
     end_time = time.time()
 
     print(f"Total execution time: {end_time - start_time:.2f} seconds")
     print(f"Process memory usage: {psutil.Process(os.getpid()).memory_info().rss / (1024**3):.2f} GB")
 
+    del parameters
+    gc.collect()
     if result is not None and result.size > 0:
         result_np = np.array(result, dtype=np.uint8)
         print(f"Result shape: {result_np.shape}")

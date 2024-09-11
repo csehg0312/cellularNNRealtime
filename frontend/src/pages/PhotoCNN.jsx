@@ -15,6 +15,12 @@ function PhotoCNN() {
   const [invertSize, setInvertSize] = createSignal(false);
   const [KeepOriginalSize, setKeepOriginalSize] = createSignal(false);
 
+  const [selectedMode, setSelectedMode] = createSignal('edge_detect_'); 
+  
+  const handleModeChange = (e) => {
+    setSelectedMode(e.target.value);
+  };
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -47,6 +53,7 @@ function PhotoCNN() {
     formData.append('keep_original_size', KeepOriginalSize());
     formData.append('size', selectedSize());
     formData.append('invert_size', invertSize());
+    formData.append('mode', selectedMode());
 
     try {
       const response = await fetch(serverUrl(), {
@@ -100,10 +107,12 @@ function PhotoCNN() {
 
       <div class="flex flex-col items-center mt-6 w-full max-w-md">
         <h3 class="mb-2">Mode (Mód):</h3>
-        <select 
-          name="settings" 
-          id="settings" 
+        <select
+          name="settings"
+          id="settings"
           class="bg-black mb-4 border border-gray-300 p-2 rounded w-full sm:w-40"
+          value={selectedMode()}
+          onChange={handleModeChange} // Capture mode changes
         >
           <option value="edge_detect_">Edge Detection (Él detektálás)</option>
           <option value="grayscale_edge_detect_">Grayscale Edge Detection (Szürke él detektálás)</option>
@@ -112,7 +121,7 @@ function PhotoCNN() {
           <option value="diagonal_line_detect_">Diagonal line detection</option>
           <option value="horizontal_line_detect_">Horizontal Line Detect</option>
           <option value="vertical_line_detect_">Vertical Line Detect</option>
-          <option value="optimal_line_detect_">Optimal Line Detect</option>
+          <option value="optimal_edge_detect_">Optimal Edge Detect</option>
           <option value="noise_removal_">Noise removal</option>
           <option value="shadow_detect_">Shadow Detection</option>
           <option value="connected_comp_">Connected Components</option>
