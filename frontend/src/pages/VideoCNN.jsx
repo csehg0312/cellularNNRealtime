@@ -274,17 +274,17 @@ const VideoCNN = () => {
                 <input type='checkbox' id='use-datachannel' class="mr-2" />
                 Use Datachannel?
               </label>
-              <select id="datachannel-parameters" class="p-2 border rounded">
+              <select id="datachannel-parameters" class="text-black p-2 border rounded">
                 <option value='{"ordered": true}'>Ordered, reliable</option>
                 <option value='{"ordered": false, "maxRetransmits": 0}'>Unordered, no retransmissions</option>
                 <option value='{"ordered": false, "maxPacketLifetime": 500}'>Unordered, 500ms lifetime</option>
               </select>
-              <select id="video-codec" class="p-2 border rounded">
+              <select id="video-codec" class="text-black p-2 border rounded">
                 <option value="default" selected>Default codecs</option>
                 <option value="VP8/90000">VP8</option>
                 <option value="H264/90000">H264</option>
               </select>
-              <select id="video-resolution" class="p-2 border rounded">
+              <select id="video-resolution" class="text-black p-2 border rounded">
                 <option value="" selected>Default resolution</option>
                 <option value="320x240">320x240</option>
                 <option value="640x480">640x480</option>
@@ -305,7 +305,7 @@ const VideoCNN = () => {
             id="video-input"
             value={selectedVideoInput()}
             onChange={(e) => setSelectedVideoInput(e.target.value)}
-            class="p-2 border rounded"
+            class="text-black p-2 border rounded"
           >
             <For each={videoInputs()}>
               {(device) => (
