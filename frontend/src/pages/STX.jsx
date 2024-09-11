@@ -80,9 +80,9 @@ const STX = () => {
     });
 
     return (
-        <div>
-            <div>
-                <label>
+        <div class="container mx-auto p-4">
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">
                     Radius:
                     <input
                         ref={radiusRef}
@@ -92,97 +92,110 @@ const STX = () => {
                         id="radiusIN"
                         value={radius()}
                         onInput={(e) => updateRadius(e.target.value)}
+                        class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                     />
                 </label>
             </div>
-            <form id="submitTemplates" ref={formRef}>
-                <h3>Control Template</h3>
-                <table ref={ctrltableRef}>
-                    <tbody>
-                        <For each={table()}>
-                            {(row, i) => (
-                                <tr>
-                                    <For each={row}>
-                                        {(cell, j) => (
-                                            <td>
-                                                <input
-                                                    value={cell.value}
-                                                    placeholder="0"
-                                                    step="0.1"
-                                                    type="number"
-                                                    class="ctrlIN"
-                                                    style={{
-                                                        "background-color":
-                                                            cell.inRadius
-                                                                ? "lightblue"
-                                                                : "white",
-                                                    }}
-                                                    onInput={(e) => {
-                                                        const newTable = [
-                                                            ...table(),
-                                                        ];
-                                                        newTable[i()][
-                                                            j()
-                                                        ].value =
-                                                            e.target.value;
-                                                        setTable(newTable);
-                                                    }}
-                                                />
-                                            </td>
-                                        )}
-                                    </For>
-                                </tr>
-                            )}
-                        </For>
-                    </tbody>
-                </table>
-                <h3>Feedback template</h3>
-                <table ref={fdbtableRef}>
-                    <tbody>
-                        <For each={table()}>
-                            {(row, i) => (
-                                <tr>
-                                    <For each={row}>
-                                        {(cell, j) => (
-                                            <td>
-                                                <input
-                                                    value={cell.value}
-                                                    placeholder="0"
-                                                    class="fdbIN"
-                                                    step="0.1"
-                                                    type="number"
-                                                    style={{
-                                                        "background-color":
-                                                            cell.inRadius
-                                                                ? "lightblue"
-                                                                : "white",
-                                                    }}
-                                                    onInput={(e) => {
-                                                        const newTable = [
-                                                            ...table(),
-                                                        ];
-                                                        newTable[i()][
-                                                            j()
-                                                        ].value =
-                                                            e.target.value;
-                                                        setTable(newTable);
-                                                    }}
-                                                />
-                                            </td>
-                                        )}
-                                    </For>
-                                </tr>
-                            )}
-                        </For>
-                    </tbody>
-                </table>
-                <button type="button" id="sendSubmit" onClick={handleSubmit}>
+            <form id="submitTemplates" ref={formRef} class="space-y-8">
+                <div>
+                    <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">Control Template</h3>
+                    <div class="overflow-x-auto">
+                        <table ref={ctrltableRef} class="min-w-full table-auto border-collapse">
+                            <tbody>
+                                <For each={table()}>
+                                    {(row, i) => (
+                                        <tr>
+                                            <For each={row}>
+                                                {(cell, j) => (
+                                                    <td class="p-2 border">
+                                                        <input
+                                                            value={cell.value}
+                                                            placeholder="0"
+                                                            step="0.1"
+                                                            type="number"
+                                                            class="ctrlIN w-full p-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                                            style={{
+                                                                "background-color": cell.inRadius
+                                                                    ? "lightblue"
+                                                                    : "white",
+                                                            }}
+                                                            onInput={(e) => {
+                                                                const newTable = [...table()];
+                                                                newTable[i()][j()].value = e.target.value;
+                                                                setTable(newTable);
+                                                            }}
+                                                        />
+                                                    </td>
+                                                )}
+                                            </For>
+                                        </tr>
+                                    )}
+                                </For>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+    
+                <div>
+                    <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">Feedback Template</h3>
+                    <div class="overflow-x-auto">
+                        <table ref={fdbtableRef} class="min-w-full table-auto border-collapse">
+                            <tbody>
+                                <For each={table()}>
+                                    {(row, i) => (
+                                        <tr>
+                                            <For each={row}>
+                                                {(cell, j) => (
+                                                    <td class="p-2 border">
+                                                        <input
+                                                            value={cell.value}
+                                                            placeholder="0"
+                                                            step="0.1"
+                                                            type="number"
+                                                            class="fdbIN w-full p-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                                            style={{
+                                                                "background-color": cell.inRadius
+                                                                    ? "lightblue"
+                                                                    : "white",
+                                                            }}
+                                                            onInput={(e) => {
+                                                                const newTable = [...table()];
+                                                                newTable[i()][j()].value = e.target.value;
+                                                                setTable(newTable);
+                                                            }}
+                                                        />
+                                                    </td>
+                                                )}
+                                            </For>
+                                        </tr>
+                                    )}
+                                </For>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+    
+                <button
+                    type="button"
+                    id="sendSubmit"
+                    onClick={handleSubmit}
+                    class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
                     Send to server
                 </button>
             </form>
-            <a href="/">Back</a>
+    
+            <div class="mt-4">
+                <a
+                    href="/"
+                    class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-300 dark:hover:text-indigo-500"
+                >
+                    Back
+                </a>
+            </div>
         </div>
     );
+    
 };
 
 export default STX;
