@@ -105,9 +105,19 @@ function PhotoCNN() {
           id="settings" 
           class="bg-black mb-4 border border-gray-300 p-2 rounded w-full sm:w-40"
         >
-          <option value="edge-detection">Edge Detection (Él detektálás)</option>
-          <option value="grayscale-edge-detection">Grayscale Edge Detection (Szürke él detektálás)</option>
-          <option value="inverse">Inverse (Inverz)</option>
+          <option value="edge_detect_">Edge Detection (Él detektálás)</option>
+          <option value="grayscale_edge_detect_">Grayscale Edge Detection (Szürke él detektálás)</option>
+          <option value="corner_detect_">Corner detection (Sarok detektálás)</option>
+          <option value="inversion_">Inversion (Inverz)</option>
+          <option value="diagonal_line_detect_">Diagonal line detection</option>
+          <option value="horizontal_line_detect_">Horizontal Line Detect</option>
+          <option value="vertical_line_detect_">Vertical Line Detect</option>
+          <option value="optimal_line_detect_">Optimal Line Detect</option>
+          <option value="noise_removal_">Noise removal</option>
+          <option value="shadow_detect_">Shadow Detection</option>
+          <option value="connected_comp_">Connected Components</option>
+          <option value="saved_">Saved settings</option>
+
         </select>
 
           <div class="flex flex-col items-center mb-4">
