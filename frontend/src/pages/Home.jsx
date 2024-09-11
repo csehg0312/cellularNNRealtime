@@ -16,6 +16,14 @@ function Navbar() {
           </li>
           <li>
             <a
+              href="/mobilecnn"
+              class="border-b-2 pb-2 transition-colors text-white hover:text-orange-600 border-gray-300 hover:border-orange-600"
+            >
+              Mobile CNN
+            </a>
+          </li>
+          <li>
+            <a
               href="/videocnn"
               class="border-b-2 pb-2 transition-colors text-white hover:text-orange-600 border-gray-300 hover:border-orange-600"
             >

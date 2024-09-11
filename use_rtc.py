@@ -11,6 +11,8 @@ frames = asyncio.Queue()
 class VideoTransformTrack:
     def __init__(self, track):
         self.track = track
+        self.kind = "video"
+        self.id = str(id(self))
 
     async def recv(self):
         frame = await self.track.recv()
@@ -30,8 +32,7 @@ async def handle_offer(request):
 
     @pc.on("track")
     def on_track(track):
-        if track.kind == "video":
-            pc.addTrack(VideoTransformTrack(relay.subscribe(track)))
+        pc.addTrack(VideoTransformTrack(relay.subscribe(track)))
 
     # Set the remote description
     await pc.setRemoteDescription(offer)
@@ -61,9 +62,3 @@ async def on_shutdown(app):
     await asyncio.gather(*coros)
     app['pcs'].clear()
     
-async def process_frames():
-    while True:
-        frame = await frames.get()
-        # Process the frame here
-        # For example, you could save it to disk, apply some transformations, etc.
-        print(f"Received frame: {frame}")

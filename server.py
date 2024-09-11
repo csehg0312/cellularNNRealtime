@@ -1,5 +1,5 @@
-from julia.api import Julia
-jl = Julia(compiled_modules=False)
+# from julia.api import Julia
+# jl = Julia(compiled_modules=False)
 
 import cv2
 import numpy as np
@@ -12,7 +12,7 @@ from PIL import Image, UnidentifiedImageError
 from pathlib import Path
 from cnn_v1 import cnnCall
 from av import VideoFrame
-from use_rtc import handle_offer, on_shutdown, process_frames
+from use_rtc import handle_offer, on_shutdown
 
 # Path to the dist directory
 dist_path = Path(__file__).parent / "dist"
@@ -103,7 +103,13 @@ async def handle_upload(request):
         print(f"Error: {str(e)}")
         return web.Response(status=500, text="Internal server error")
 
+async def process_frames():
+    while True:
+        frame = await frames.get()
+        print(f"Received frame: {frame}")
+
 # Serve static files from the dist/assets directory
+loop = asyncio.get_event_loop()
 app = web.Application()
 app.router.add_post('/upload', handle_upload)
 app.router.add_post('/offer', handle_offer)
@@ -121,7 +127,7 @@ async def handle_index(request):
 app.router.add_get('/', handle_index)
 
 # Start frame processing
-asyncio.get_event_loop().create_task(process_frames())
+loop.create_task(process_frames())
 
 if __name__ == '__main__':
     web.run_app(app, port=8000)

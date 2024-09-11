@@ -1,6 +1,6 @@
 import { createSignal, createEffect, onCleanup, onMount, For } from 'solid-js';
 
-const WebRTCComponent = () => {
+const MobileCNN = () => {
   const [dataChannelLog, setDataChannelLog] = createSignal('');
   const [iceConnectionLog, setIceConnectionLog] = createSignal('');
   const [iceGatheringLog, setIceGatheringLog] = createSignal('');
@@ -10,15 +10,10 @@ const WebRTCComponent = () => {
   const [showStart, setShowStart] = createSignal(true);
   const [showStop, setShowStop] = createSignal(false);
   const [showMedia, setShowMedia] = createSignal(false);
-  
-  // State variables for video devices
   const [videoInputs, setVideoInputs] = createSignal([]);
   const [selectedVideoInput, setSelectedVideoInput] = createSignal('');
-
-  //Close variables
   const [isOpen, setIsOpen] = createSignal(true);
 
-  //Peerconnection, datachannel and interval variable
   let pc = null;
   let dc = null;
   let dcInterval = null;
@@ -58,9 +53,7 @@ const WebRTCComponent = () => {
     try {
       const devices = await navigator.mediaDevices.enumerateDevices();
       const videoInputDevices = devices.filter(device => device.kind === 'videoinput');
-
       setVideoInputs(videoInputDevices);
-
       if (videoInputDevices.length > 0) {
         setSelectedVideoInput(videoInputDevices[0].deviceId);
       }
@@ -90,11 +83,6 @@ const WebRTCComponent = () => {
 
       const localDesc = pc.localDescription;
       let sdp = localDesc.sdp;
-
-      // const videoCodec = document.getElementById('video-codec').value;
-      // if (videoCodec !== 'default') {
-      //   sdp = sdpFilterCodec('video', videoCodec, sdp);
-      // }
 
       setOfferSdp(sdp);
 
@@ -163,12 +151,6 @@ const WebRTCComponent = () => {
       video: { deviceId: { exact: selectedVideoInput() } }
     };
 
-    // const resolution = document.getElementById('video-resolution').value;
-    // if (resolution) {
-    //   const [width, height] = resolution.split('x').map(Number);
-    //   constraints.video = { ...constraints.video, width, height };
-    // }
-
     try {
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       stream.getTracks().forEach(track => {
@@ -207,36 +189,6 @@ const WebRTCComponent = () => {
     }, 500);
   };
 
-  const sdpFilterCodec = (kind, codec, realSdp) => {
-    var allowed = []
-    var rtxRegex = new RegExp('a=fmtp:(\\d+) apt=(\\d+)\r$');
-    var codecRegex = new RegExp('a=rtpmap:([0-9]+) ' + escapeRegExp(codec))
-    var videoRegex = new RegExp('(m=' + kind + ' .*?)( ([0-9]+))*\\s*$')
-
-    var lines = realSdp.split('\n');
-
-    var isKind = false;
-    for (var i = 0; i < lines.length; i++) {
-        if (lines[i].startsWith('m=' + kind + ' ')) {
-            isKind = true;
-        } else if (lines[i].startsWith('m=')) {
-            isKind = false;
-        }
-
-        if (isKind) {
-            var match = lines[i].match(codecRegex);
-            if (match) {
-                allowed.push(parseInt(match[1]));
-            }
-
-            match = lines[i].match(rtxRegex);
-            if (match && allowed.includes(parseInt(match[2]))) {
-                allowed.push(parseInt(match[1]));
-            }
-        }
-    }
-  };
-
   onMount(() => {
     enumerateVideoDevices();
   });
@@ -251,50 +203,55 @@ const WebRTCComponent = () => {
   });
 
   return (
-    <div>
-      <h2>Video WebRTC</h2>
-      <div>
-        <h3>Settings:</h3>
-        <div class='border border-black shadow-md mx-auto flex flex-col px-2 gap-2' >
-        <button 
-          class='self-end text-gray-500 hover:text-gray-700'
-          onClick={() => setIsOpen(!isOpen())}
-        >
-          {isOpen() ? '▼ Close' : '▶ Open'}
-        </button>
-        {isOpen() && (
-          <>
-            <label for="use-datachannel">Use Datachannel?</label>
-            <input type='checkbox' id='use-datachannel' />
-            <select id="datachannel-parameters">
-              <option value='{"ordered": true}'>Ordered, reliable</option>
-              <option value='{"ordered": false, "maxRetransmits": 0}'>Unordered, no retransmissions</option>
-              <option value='{"ordered": false, "maxPacketLifetime": 500}'>Unordered, 500ms lifetime</option>
-            </select>
-            <select id="video-codec">
-              <option value="default" selected>Default codecs</option>
-              <option value="VP8/90000">VP8</option>
-              <option value="H264/90000">H264</option>
-            </select>
-            <select id="video-resolution">
-              <option value="" selected>Default resolution</option>
-              <option value="320x240">320x240</option>
-              <option value="640x480">640x480</option>
-              <option value="960x540">960x540</option>
-              <option value="1280x720">1280x720</option>
-            </select>
-            <label for="use-stun">Use stun?</label>
-            <input type='checkbox' id='use-stun' />
-          </>
-        )}
+    <div class="p-4">
+      <h2 class="text-2xl font-bold mb-4">Video WebRTC</h2>
+      <div class="mb-4">
+        <h3 class="text-xl font-semibold mb-2">Settings:</h3>
+        <div class='border border-black shadow-md mx-auto flex flex-col px-2 gap-2'>
+          <button 
+            class='self-end text-gray-500 hover:text-gray-700'
+            onClick={() => setIsOpen(!isOpen())}
+          >
+            {isOpen() ? '▼ Close' : '▶ Open'}
+          </button>
+          {isOpen() && (
+            <>
+              <label for="use-datachannel" class="flex items-center">
+                <input type='checkbox' id='use-datachannel' class="mr-2" />
+                Use Datachannel?
+              </label>
+              <select id="datachannel-parameters" class="p-2 border rounded">
+                <option value='{"ordered": true}'>Ordered, reliable</option>
+                <option value='{"ordered": false, "maxRetransmits": 0}'>Unordered, no retransmissions</option>
+                <option value='{"ordered": false, "maxPacketLifetime": 500}'>Unordered, 500ms lifetime</option>
+              </select>
+              <select id="video-codec" class="p-2 border rounded">
+                <option value="default" selected>Default codecs</option>
+                <option value="VP8/90000">VP8</option>
+                <option value="H264/90000">H264</option>
+              </select>
+              <select id="video-resolution" class="p-2 border rounded">
+                <option value="" selected>Default resolution</option>
+                <option value="320x240">320x240</option>
+                <option value="640x480">640x480</option>
+                <option value="960x540">960x540</option>
+                <option value="1280x720">1280x720</option>
+              </select>
+              <label for="use-stun" class="flex items-center">
+                <input type='checkbox' id='use-stun' class="mr-2" />
+                Use STUN?
+              </label>
+            </>
+          )}
         </div>
-        <h3>Video Devices</h3>
+        <h3 class="text-xl font-semibold mt-4 mb-2">Video Devices</h3>
         <div>
-        <label for="video-input">Video Input: </label>
+          <label for="video-input" class="mr-2">Video Input:</label>
           <select
             id="video-input"
             value={selectedVideoInput()}
             onChange={(e) => setSelectedVideoInput(e.target.value)}
+            class="p-2 border rounded"
           >
             <For each={videoInputs()}>
               {(device) => (
@@ -306,28 +263,28 @@ const WebRTCComponent = () => {
           </select>
         </div>
       </div>
-      <div>
-        <button onClick={start} style={{ display: showStart() ? 'inline-block' : 'none' }}>Start</button>
-        <button onClick={stop} style={{ display: showStop() ? 'inline-block' : 'none' }}>Stop</button>
+      <div class="mb-4">
+        <button onClick={start} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" style={{ display: showStart() ? 'inline-block' : 'none' }}>Start</button>
+        <button onClick={stop} class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" style={{ display: showStop() ? 'inline-block' : 'none' }}>Stop</button>
       </div>
       <div id="media" style={{ display: showMedia() ? 'block' : 'none' }}>
-        <h3>Media</h3>
-        <video id="video" autoplay="true" playsinline="true"></video>
+        <h3 class="text-xl font-semibold mb-2">Media</h3>
+        <video id="video" autoplay playsinline class="w-full max-w-lg mx-auto"></video>
       </div>
-      <h3>Data Channel</h3>
-      <pre id="data-channel">{dataChannelLog()}</pre>
-      <h3>ICE Connection State</h3>
+      <h3 class="text-xl font-semibold mb-2">Data Channel</h3>
+      <pre id="data-channel" class="bg-gray-100 p-2 rounded">{dataChannelLog()}</pre>
+      <h3 class="text-xl font-semibold mb-2">ICE Connection State</h3>
       <p id="ice-connection-state">{iceConnectionLog()}</p>
-      <h3>ICE Gathering State</h3>
+      <h3 class="text-xl font-semibold mb-2">ICE Gathering State</h3>
       <p id="ice-gathering-state">{iceGatheringLog()}</p>
-      <h3>Signaling State</h3>
+      <h3 class="text-xl font-semibold mb-2">Signaling State</h3>
       <p id="signaling-state">{signalingLog()}</p>
-      <h3>SDP Offer</h3>
-      <pre id="offer-sdp">{offerSdp()}</pre>
-      <h3>SDP Answer</h3>
-      <pre id="answer-sdp">{answerSdp()}</pre>
+      <h3 class="text-xl font-semibold mb-2">SDP Offer</h3>
+      <pre id="offer-sdp" class="bg-gray-100 p-2 rounded overflow-auto max-h-40">{offerSdp()}</pre>
+      <h3 class="text-xl font-semibold mb-2">SDP Answer</h3>
+      <pre id="answer-sdp" class="bg-gray-100 p-2 rounded overflow-auto max-h-40">{answerSdp()}</pre>
     </div>
   );
 };
 
-export default WebRTCComponent;
+export default MobileCNN;
