@@ -7,7 +7,6 @@ const Home = lazy(() => import('./pages/Home'));
 const STX = lazy(() => import('./pages/STX'));
 const PhotoCNN = lazy(() => import('./pages/PhotoCNN'));
 const VideoCNN = lazy(() => import('./pages/VideoCNN'));
-const MobileCNN = lazy(() => import('./pages/MobileCNN'));
 
 // Define the root App component that wraps the children
 const App = (props) => (
@@ -22,7 +21,6 @@ render(() => (
   <Router>
     <Route path="/" component={Home} />
     <Route path="/videocnn" component={VideoCNN} />
-    <Route path="/mobilecnn" component={MobileCNN} />
     <Route path="/photocnn" component={PhotoCNN} />
     <Route path="/stx" component={STX} />
   </Router>
