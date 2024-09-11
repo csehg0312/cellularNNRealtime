@@ -3,7 +3,7 @@ import styles from './Home.module.css';
 
 function Navbar() {
   return (
-    <nav className="py-4 bg-black text-white border border-secondary-tangerine shadow-sm">
+    <nav className="py-4 bg-black text-white border border-black shadow-sm">
       <div class="container mx-auto flex justify-between items-center px-4">
         <ul class="flex space-x-4">
           <li>

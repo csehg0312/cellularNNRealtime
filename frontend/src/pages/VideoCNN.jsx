@@ -15,6 +15,10 @@ const WebRTCComponent = () => {
   const [videoInputs, setVideoInputs] = createSignal([]);
   const [selectedVideoInput, setSelectedVideoInput] = createSignal('');
 
+  //Close variables
+  const [isOpen, setIsOpen] = createSignal(true);
+
+  //Peerconnection, datachannel and interval variable
   let pc = null;
   let dc = null;
   let dcInterval = null;
@@ -87,10 +91,10 @@ const WebRTCComponent = () => {
       const localDesc = pc.localDescription;
       let sdp = localDesc.sdp;
 
-      const videoCodec = document.getElementById('video-codec').value;
-      if (videoCodec !== 'default') {
-        sdp = sdpFilterCodec('video', videoCodec, sdp);
-      }
+      // const videoCodec = document.getElementById('video-codec').value;
+      // if (videoCodec !== 'default') {
+      //   sdp = sdpFilterCodec('video', videoCodec, sdp);
+      // }
 
       setOfferSdp(sdp);
 
@@ -98,7 +102,6 @@ const WebRTCComponent = () => {
         body: JSON.stringify({
           sdp: sdp,
           type: localDesc.type,
-          video_transform: document.getElementById('video-transform').value,
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -160,11 +163,11 @@ const WebRTCComponent = () => {
       video: { deviceId: { exact: selectedVideoInput() } }
     };
 
-    const resolution = document.getElementById('video-resolution').value;
-    if (resolution) {
-      const [width, height] = resolution.split('x').map(Number);
-      constraints.video = { ...constraints.video, width, height };
-    }
+    // const resolution = document.getElementById('video-resolution').value;
+    // if (resolution) {
+    //   const [width, height] = resolution.split('x').map(Number);
+    //   constraints.video = { ...constraints.video, width, height };
+    // }
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -251,10 +254,43 @@ const WebRTCComponent = () => {
     <div>
       <h2>Video WebRTC</h2>
       <div>
+        <h3>Settings:</h3>
+        <div class='border border-black shadow-md mx-auto flex flex-col px-2 gap-2' >
+        <button 
+          class='self-end text-gray-500 hover:text-gray-700'
+          onClick={() => setIsOpen(!isOpen())}
+        >
+          {isOpen() ? '▼ Close' : '▶ Open'}
+        </button>
+        {isOpen() && (
+          <>
+            <label for="use-datachannel">Use Datachannel?</label>
+            <input type='checkbox' id='use-datachannel' />
+            <select id="datachannel-parameters">
+              <option value='{"ordered": true}'>Ordered, reliable</option>
+              <option value='{"ordered": false, "maxRetransmits": 0}'>Unordered, no retransmissions</option>
+              <option value='{"ordered": false, "maxPacketLifetime": 500}'>Unordered, 500ms lifetime</option>
+            </select>
+            <select id="video-codec">
+              <option value="default" selected>Default codecs</option>
+              <option value="VP8/90000">VP8</option>
+              <option value="H264/90000">H264</option>
+            </select>
+            <select id="video-resolution">
+              <option value="" selected>Default resolution</option>
+              <option value="320x240">320x240</option>
+              <option value="640x480">640x480</option>
+              <option value="960x540">960x540</option>
+              <option value="1280x720">1280x720</option>
+            </select>
+            <label for="use-stun">Use stun?</label>
+            <input type='checkbox' id='use-stun' />
+          </>
+        )}
+        </div>
         <h3>Video Devices</h3>
         <div>
-        <input type='checkbox' id='use-stun'>Use stun</input> 
-          <label for="video-input">Video Input: </label>
+        <label for="video-input">Video Input: </label>
           <select
             id="video-input"
             value={selectedVideoInput()}
