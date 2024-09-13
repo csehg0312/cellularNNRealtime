@@ -1,6 +1,7 @@
 import { lazy } from "solid-js";
 import { render } from "solid-js/web";
 import { Router, Route } from "@solidjs/router";
+import './index.css';
 
 // Lazy load the components for different routes
 const Home = lazy(() => import('./pages/Home'));

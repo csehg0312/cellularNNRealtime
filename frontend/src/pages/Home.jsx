@@ -3,13 +3,13 @@ import styles from './Home.module.css';
 
 function Navbar() {
   return (
-    <nav className="py-4 bg-black text-white border border-black shadow-sm">
-      <div class="container mx-auto flex justify-between items-center px-4">
-        <ul class="flex space-x-4">
+    <nav className="py-4 bg-custom-darkGray text-custom-white border border-custom-graphite shadow-sm">
+      <div className="container mx-auto flex justify-between items-center px-4">
+        <ul className="flex space-x-4">
           <li>
             <a
               href="/photocnn"
-              class="border-b-2 pb-2 transition-colors text-white hover:text-orange-600 border-gray-300 hover:border-orange-600"
+              className="border-b-2 pb-2 transition-colors text-custom-white hover:text-custom-deepOrange border-custom-graphite hover:border-custom-tangerine"
             >
               Photo CNN
             </a>
@@ -17,7 +17,7 @@ function Navbar() {
           <li>
             <a
               href="/videocnn"
-              class="border-b-2 pb-2 transition-colors text-white hover:text-orange-600 border-gray-300 hover:border-orange-600"
+              className="border-b-2 pb-2 transition-colors text-custom-white hover:text-custom-deepOrange border-custom-graphite hover:border-custom-tangerine"
             >
               VideoCNN
             </a>
@@ -25,7 +25,7 @@ function Navbar() {
           <li>
             <a
               href="/stx"
-              class="border-b-2 pb-2 transition-colors text-white hover:text-orange-600 border-gray-300 hover:border-orange-600"
+              className="border-b-2 pb-2 transition-colors text-custom-white hover:text-custom-deepOrange border-custom-graphite hover:border-custom-tangerine"
             >
               Set parameters
             </a>
@@ -43,7 +43,7 @@ function Home() {
     // class="container mx-auto p-4 pt-6 md:p-6 lg:p-12"
     <div className={`${styles.container} mx-auto p-4 pt-6 md:p-6 lg:p-12`}>
       <Navbar />
-      <h1 class="text-3xl font-bold mb-4">Mi az a celluláris neurális hálózat?</h1>
+      <h1 class="bg-darkGray text-3xl font-bold mb-4">Mi az a celluláris neurális hálózat?</h1>
       <p class="text-lg mb-8">A celluláris neurális hálózat (CNN) egy speciális típusú neurális hálózat, amely az emberi agy struktúráját és működését mintázza. A hagyományos neurális hálózatokkal ellentétben, amelyek rétegekben vannak szervezve, a CNN egy összekapcsolt sejtekből álló rácsot alkot, ahol minden sejt hasonlóan működik, mint az agyban lévő neuron.</p>
       
       <h2 class="text-2xl font-bold mb-4">Hogyan Működik?</h2>

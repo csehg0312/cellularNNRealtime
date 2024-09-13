@@ -1,38 +1,24 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  mode: 'jit',
   content: [
-    './src/**/*.{js,jsx,ts,tsx,html}', 
-    './pages/**/*.{js,ts,jsx,tsx}',
-    './components/**/*.{js,ts,jsx,tsx}',
+    './src/**/*.{html,js,jsx,ts,tsx}', 
+    './pages/**/*.{html,js,ts,jsx,tsx}',
+    './components/**/*.{html,js,ts,jsx,tsx}',
+    './index.html',
   ],
-  
   theme: {
     extend: {
       colors: {
-        // darkGray: '#1F1F1F',
-        // navyBlue: '#0D1B2A',
-        // graphite: '#2C2C2C',
-        // white: '#f0f0f0',
-        // amber: '#FFC107',
-        // goldenYellow: '#FFB400',
-        // deepOrange: '#FF5722',
-        // tangerine: '#FF6F00',
+        'custom-darkGray': '#1F1F1F',
+        'custom-navyBlue': '#0D1B2A',
+        'custom-graphite': '#2C2C2C',
+        'custom-white': '#f0f0f0',
+        'custom-amber': '#FFC107',
+        'custom-goldenYellow': '#FFB400',
+        'custom-deepOrange': '#FF5722',
+        'custom-tangerine': '#FF6F00',
       },
     },
-  }, 
-  variants: {
-    extend: {
-      backgroundColor: ['hover'],
-      textColor: ['hover'],
-      borderColor: ['hover'],
-    },
-  }, 
+  },
   plugins: [],
-  // safelist: [
-  //   {
-  //     pattern:
-  //       /(bg|text|border)-(darkGray|navyBlue|white|graphite|amber|goldenYellow|deepOrange|tangerine)/,
-  //   },
-  // ],
 }
