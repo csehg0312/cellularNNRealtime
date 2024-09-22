@@ -106,12 +106,36 @@ async def process_frames():
     while True:
         frame = await frames.get()
         print(f"Received frame: {frame}")
+        
+from pkl_save import save_saved
+
+async def handle_stx_save(request):
+    try:
+        # Reading the multipart data
+        data = await request.json()
+        
+        arr_1d_ctrl = np.array(data['ctrl'])
+        arr_1d_fdb = np.array(data['fdb'])
+        radius = data['radius']
+        size = int(radius) * 2 + 1
+        print(data['bias'])
+        arr_2d_ctrl = arr_1d_ctrl[:size*size].reshape(size, size)
+        arr_2d_fdb = arr_1d_fdb[:size*size].reshape(size, size)
+        t_span = np.linspace(0, int(data['tspan']), int(data['steps']))
+   
+        print(f"A: {arr_2d_ctrl}, B: {arr_2d_fdb}, t: {t_span}, Ib: {data['bias']}, init: {data['initial']}")
+        message = save_saved(A=arr_2d_fdb, B=arr_2d_ctrl, t=t_span, Ib=data['bias'], init=data['initial'])
+        return web.Response(body="message", content_type="text")
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return web.Response(status=500, text="Internal server error")
 
 # Serve static files from the dist/assets directory
 loop = asyncio.get_event_loop()
 app = web.Application()
 app.router.add_post('/upload', handle_upload)
 app.router.add_post('/offer', handle_offer)
+app.router.add_post('/stx', handle_stx_save)
 app['pcs'] = set()
 
 # Serve static assets from dist/assets

@@ -1,4 +1,5 @@
 import numpy as np
+import gc
 
 #Creating the basic cnn parameters
 #parameters source: https://github.com/ankitaggarwal011/PyCNN
@@ -244,3 +245,24 @@ settings = {
 # Save the data to a file using pickle
 with open('settings.pkl', 'wb') as f:
     pickle.dump(settings, f)
+    
+
+def save_saved(A:np.array,B:np.array,t:np.linspace,Ib:float,init:float) -> str:
+    try:
+        with open('settings.pkl', 'rb') as f:
+            saved = pickle.load(f)
+        saved['saved_A'] = A
+        saved['saved_B'] = B
+        saved['saved_t'] = t
+        saved['saved_Ib'] = Ib
+        saved['saved_init'] = init
+        
+        with open('settings.pkl', 'wb') as f:
+            pickle.dump(saved, f)
+        
+        del saved
+        gc.collect()
+        
+        return "Success"
+    except Exception as e:
+        return f"Problem {e}"

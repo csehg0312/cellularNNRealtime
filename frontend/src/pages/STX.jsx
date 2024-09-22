@@ -20,19 +20,29 @@ const STX = () => {
             fdbtableRef.querySelectorAll("input.fdbIN"),
         );
         const ctrlVals = ctrlInputs.map((input) =>
-            input.value === "" ? "0" : input.value,
+            input.value === "" ? "0.0" : input.value,
         );
         const fdbVals = fdbInputs.map((input) =>
-            input.value === "" ? "0" : input.value,
+            input.value === "" ? "0.0" : input.value,
         );
-
+        const initialVal = document.getElementById("initialVal");
+        const biasVal = document.getElementById("biasVal");
+        const tspanVal = document.getElementById("tspanVal");
+        const stepsVal = document.getElementById("stepsVal");
         const dataToSend = {
             radius: radiusRef.value,
             ctrl: ctrlVals,
             fdb: fdbVals,
+            bias: biasVal.value.trim(),
+            tspan: tspanVal.value,
+            initial:initialVal.value,
+            steps:stepsVal.value
         };
+
+        console.log(dataToSend);
+
         try {
-            const response = await fetch("/temp", {
+            const response = await fetch("/stx", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -178,7 +188,7 @@ const STX = () => {
                 <div>
                     <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">Kezdeti állapot (Tizedes szám)</h3>
                     <div class="overflow-x-auto">
-                        <input class="w-full p-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" 
+                        <input id="initialVal" class="w-full p-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" 
                         type="number" 
                         // value={0.0}
                         step="0.1" 
@@ -189,7 +199,7 @@ const STX = () => {
                 <div>
                     <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">Biasz változó (Tizedes szám)</h3>
                     <div class="overflow-x-auto">
-                        <input class="w-full p-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" 
+                        <input id="biasVal" class="w-full p-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" 
                         type="number" 
                         // value={0.0}
                         step="0.1" 
@@ -204,6 +214,7 @@ const STX = () => {
                         <label for="linspace" class="text-md font-medium leading-6 text-black">Az idősík 0-20 között:</label>
                         <input class="linspace w-full p-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" 
                         type="range" 
+                        id="tspanVal"
                         // value={0.0}
                         min="0"
                         max="20"
@@ -215,6 +226,7 @@ const STX = () => {
                         <h4 class="text-md font-medium leading-6 text-black" >Lépések száma (Egész szám):</h4>
                         <input class="w-full p-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" 
                         type="number" 
+                        id="stepsVal"
                         // value={0.0}
                         step="0.1" 
                         placeholder="1" 
