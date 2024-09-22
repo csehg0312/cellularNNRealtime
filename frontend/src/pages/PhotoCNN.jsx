@@ -79,24 +79,38 @@ function PhotoCNN() {
   return (
     <div class=" text-white flex flex-col items-center p-4 min-h-screen">
       <div class="flex flex-col items-center w-full max-w-md mt-4">
-      <label class="relative inline-block cursor-pointer">
-          <span class="block text-center bg-[#ff9500] text-white py-2 px-4 rounded border-2 border-[#e56e00] font-bold">
-            Kép feltöltése
-          </span>
-          <input
-            type="file"
-            accept="image/*"
-            capture="user"
-            onChange={handleImageChange}
-            class="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
-          />
-        </label>
+        <div class="flex items-center space-x-2">
+          <label class="relative inline-block cursor-pointer">
+            <span class="block text-center bg-[#ff9500] text-white py-2 px-4 rounded border-2 border-[#e56e00] font-bold">
+              {image() === null ? "Kép feltöltése" : "Kép módosítása"}
+            </span>
+            <input
+              type="file"
+              accept="image/*"
+              capture="user"
+              onChange={handleImageChange}
+              class="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
+            />
+          </label>
+          <label class="relative inline-block cursor-pointer">
+            {image() && (
+              <button
+                class=" bg-red-500 text-white py-2 px-4 rounded text-sm border-2 border-red-700 font-bold"
+                onClick={() => setImage(null)} // Function to clear the image
+              >
+                Clear
+              </button>
+            )}
+          </label>
+        </div>
+
         {image() && (
           <div class="flex flex-col items-center mb-4">
             <img src={image()} alt="Captured" class="w-full max-w-sm mb-4" />
             <UploadButton onClick={uploadImage} />
           </div>
         )}
+
         {outputImage() && (
           <div class="flex flex-col items-center">
             <h3 class="mb-2">Output Image:</h3>
