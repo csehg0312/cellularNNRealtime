@@ -162,7 +162,7 @@ function PhotoCNN() {
 
           <div class="flex flex-col items-center mb-4">
             <h4 class="mb-2">Image size to use <br/> (Kimeneti kép mérete):</h4>
-            <select value={selectedSize()} onChange={handleSizeChange} class="bg-black mb-2 border border-gray-300 p-2 rounded">
+            <select value={selectedSize()} onChange={handleSizeChange} disabled={KeepOriginalSize() ? true : false} class="bg-black mb-2 border border-gray-300 p-2 rounded">
               <option value="320x240">320x240</option>
               <option value="640x480">640x480</option>
               <option value="960x540">960x540</option>

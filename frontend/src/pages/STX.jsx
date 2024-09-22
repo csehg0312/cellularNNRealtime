@@ -174,6 +174,54 @@ const STX = () => {
                         </table>
                     </div>
                 </div>
+
+                <div>
+                    <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">Kezdeti állapot (Tizedes szám)</h3>
+                    <div class="overflow-x-auto">
+                        <input class="w-full p-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" 
+                        type="number" 
+                        // value={0.0}
+                        step="0.1" 
+                        placeholder="0.0" 
+                        required/>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">Biasz változó (Tizedes szám)</h3>
+                    <div class="overflow-x-auto">
+                        <input class="w-full p-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" 
+                        type="number" 
+                        // value={0.0}
+                        step="0.1" 
+                        placeholder="0.0" 
+                        required/>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">Idősík (x-tengelyen)</h3>
+                    <div class="overflow-x-auto">
+                        <label for="linspace" class="text-md font-medium leading-6 text-black">Az idősík 0-20 között:</label>
+                        <input class="linspace w-full p-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" 
+                        type="range" 
+                        // value={0.0}
+                        min="0"
+                        max="20"
+                        oninput="document.getElementById('rangeValue').innerText = '0-' + this.value" 
+                        required/>
+                        <span id="rangeValue" class="text-sm text-gray-900 dark:text-gray-100">0-20</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <h4 class="text-md font-medium leading-6 text-black" >Lépések száma (Egész szám):</h4>
+                        <input class="w-full p-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" 
+                        type="number" 
+                        // value={0.0}
+                        step="0.1" 
+                        placeholder="1" 
+                        required/>
+                    </div>
+                    
+                </div>
     
                 <button
                     type="button"

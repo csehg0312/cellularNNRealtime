@@ -322,7 +322,7 @@ const VideoCNN = () => {
         <button onClick={stop} class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" style={{ display: showStop() ? 'inline-block' : 'none' }}>Stop</button>
       </div>
       <h3 class="text-xl font-semibold mb-2">Data Channel</h3>
-      <pre id="data-channel" class="bg-gray-700 p-2 rounded">{dataChannelLog()}</pre>
+      <pre id="data-channel" class="bg-gray-700 p-2 rounded">Loaded when connection made<br/>{dataChannelLog()}</pre>
       <h3 class="text-xl font-semibold mb-2">ICE Connection State</h3>
       <p id="ice-connection-state">{iceConnectionLog()}</p>
       <h3 class="text-xl font-semibold mb-2">ICE Gathering State</h3>
@@ -330,9 +330,9 @@ const VideoCNN = () => {
       <h3 class="text-xl font-semibold mb-2">Signaling State</h3>
       <p id="signaling-state">{signalingLog()}</p>
       <h3 class="text-xl font-semibold mb-2">SDP Offer</h3>
-      <pre id="offer-sdp" class="bg-gray-700 p-2 rounded overflow-auto max-h-40">{offerSdp()}</pre>
+      <pre id="offer-sdp" class="bg-gray-700 p-2 rounded overflow-auto max-h-40">Loaded when connection made<br/>{offerSdp()}</pre>
       <h3 class="text-xl font-semibold mb-2">SDP Answer</h3>
-      <pre id="answer-sdp" class="bg-gray-700 p-2 rounded overflow-auto max-h-40">{answerSdp()}</pre>
+      <pre id="answer-sdp" class="bg-gray-700 p-2 rounded overflow-auto max-h-40">Loaded when connection made<br/>{answerSdp()}</pre>
       <div id="media" style={{ display: showMedia() ? 'block' : 'none' }}>
         <h3 class="text-xl font-semibold mb-2">Media</h3>
         <video id="video" autoplay playsinline class="w-full max-w-lg mx-auto"></video>
