@@ -114,19 +114,36 @@ function PhotoCNN() {
           value={selectedMode()}
           onChange={handleModeChange} // Capture mode changes
         >
-          <option value="edge_detect_">Edge Detection (Él detektálás)</option>
-          <option value="grayscale_edge_detect_">Grayscale Edge Detection (Szürke él detektálás)</option>
-          <option value="corner_detect_">Corner detection (Sarok detektálás)</option>
-          <option value="inversion_">Inversion (Inverz)</option>
-          <option value="diagonal_line_detect_">Diagonal line detection</option>
-          <option value="horizontal_line_detect_">Horizontal Line Detect</option>
-          <option value="vertical_line_detect_">Vertical Line Detect</option>
-          <option value="optimal_edge_detect_">Optimal Edge Detect</option>
-          <option value="noise_removal_">Noise removal</option>
-          <option value="shadow_detect_">Shadow Detection</option>
-          <option value="connected_comp_">Connected Components</option>
-          <option value="saved_">Saved settings</option>
-
+          <optgroup label="Edge Detection">
+            <option value="edge_detect_">Edge Detection (Él detektálás)</option>
+            <option value="grayscale_edge_detect_">Grayscale Edge Detection (Szürke él detektálás)</option>
+            <option value="optimal_edge_detect_">Optimal Edge Detect</option>
+            <option value="edge_enhance_">Edge enhance</option>
+          </optgroup>
+          <optgroup label="Line Detection">
+            <option value="diagonal_line_detect_">Diagonal line detection</option>
+            <option value="horizontal_line_detect_">Horizontal Line Detect</option>
+            <option value="vertical_line_detect_">Vertical Line Detect</option>
+          </optgroup>
+          <optgroup label="Image Processing">
+            <option value="inversion_">Inversion (Inverz)</option>
+            <option value="noise_removal_">Noise removal</option>
+            <option value="sharpen_">Sharpen</option>
+            <option value="halftone_">Halftone</option>
+          </optgroup>
+          <optgroup label="Object Detection">
+            <option value="corner_detect_">Corner detection (Sarok detektálás)</option>
+            <option value="blob_detect_">Blob detect</option>
+            <option value="texture_segment_">Texture segmentation</option>
+          </optgroup>
+          <optgroup label="Motion and Shadow">
+            <option value="motion_detect_">Motion detection</option>
+            <option value="shadow_detect_">Shadow Detection</option>
+          </optgroup>
+          <optgroup label="Other">
+            <option value="connected_comp_">Connected Components</option>
+            <option value="saved_">Saved</option>
+          </optgroup>
         </select>
 
           <div class="flex flex-col items-center mb-4">

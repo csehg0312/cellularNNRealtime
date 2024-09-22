@@ -79,6 +79,48 @@ connected_comp_t = np.linspace(0, 10.0, num=101)
 connected_comp_Ib = -0.5
 connected_comp_init = 0.0
 
+# Image Sharpening
+sharpen_A = np.array([[0.0, 0.0, 0.0], [0.0, 2.0, 0.0], [0.0, 0.0, 0.0]])
+sharpen_B = np.array([[-0.25, -0.5, -0.25], [-0.5, 5.0, -0.5], [-0.25, -0.5, -0.25]])
+sharpen_t = np.linspace(0, 1.0, num=101)
+sharpen_Ib = -1.0
+sharpen_init = 0.0
+
+# Blob Detection
+blob_detect_A = np.array([[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 0.0]])
+blob_detect_B = np.array([[1.0, 1.0, 1.0], [1.0, -8.0, 1.0], [1.0, 1.0, 1.0]])
+blob_detect_t = np.linspace(0, 5.0, num=101)
+blob_detect_Ib = 3.0
+blob_detect_init = 0.0
+
+# Texture Segmentation
+texture_segment_A = np.array([[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 0.0]])
+texture_segment_B = np.array([[0.5, 1.0, 0.5], [1.0, 3.0, 1.0], [0.5, 1.0, 0.5]])
+texture_segment_t = np.linspace(0, 2.0, num=101)
+texture_segment_Ib = -4.5
+texture_segment_init = 0.0
+
+# Motion Detection
+motion_detect_A = np.array([[0.0, 0.0, 0.0], [0.0, 2.0, 0.0], [0.0, 0.0, 0.0]])
+motion_detect_B = np.array([[-1.0, -1.0, -1.0], [-1.0, 8.0, -1.0], [-1.0, -1.0, -1.0]])
+motion_detect_t = np.linspace(0, 0.5, num=51)
+motion_detect_Ib = -0.5
+motion_detect_init = 0.0
+
+# Halftoning
+halftone_A = np.array([[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 0.0]])
+halftone_B = np.array([[0.25, 0.5, 0.25], [0.5, 3.0, 0.5], [0.25, 0.5, 0.25]])
+halftone_t = np.linspace(0, 10.0, num=101)
+halftone_Ib = 0.0
+halftone_init = 0.0
+
+# Edge Enhancement
+edge_enhance_A = np.array([[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 0.0]])
+edge_enhance_B = np.array([[-0.1, -0.1, -0.1], [-0.1, 2.0, -0.1], [-0.1, -0.1, -0.1]])
+edge_enhance_t = np.linspace(0, 1.0, num=101)
+edge_enhance_Ib = -0.2
+edge_enhance_init = 0.0
+
 #in case of saved parameters: 
 saved_A = np.array([[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
 saved_B = np.array([[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
@@ -155,6 +197,42 @@ settings = {
     'connected_comp_t': connected_comp_t,
     'connected_comp_Ib': connected_comp_Ib,
     'connected_comp_init': connected_comp_init,
+    
+    'sharpen_A':sharpen_A,
+    'sharpen_B':sharpen_B,
+    'sharpen_t':sharpen_t,
+    'sharpen_Ib':sharpen_Ib,
+    'sharpen_init':sharpen_init,
+    
+    'blob_detect_A':blob_detect_A,
+    'blob_detect_B':blob_detect_B,
+    'blob_detect_t':blob_detect_t,
+    'blob_detect_Ib':blob_detect_Ib,
+    'blob_detect_init':blob_detect_init,
+    
+    'texture_segment_A':texture_segment_A,
+    'texture_segment_B':texture_segment_B,
+    'texture_segment_t':texture_segment_t,
+    'texture_segment_Ib':texture_segment_Ib,
+    'texture_segment_init':texture_segment_init,
+    
+    'motion_detect_A':motion_detect_A,
+    'motion_detect_B':motion_detect_B,
+    'motion_detect_t':motion_detect_t,
+    'motion_detect_Ib':motion_detect_Ib,
+    'motion_detect_init':motion_detect_init,
+    
+    'halftone_A':halftone_A,
+    'halftone_B':halftone_B,
+    'halftone_t':halftone_t,
+    'halftone_Ib':halftone_Ib,
+    'halftone_init':halftone_init,
+    
+    'edge_enhance_A':edge_enhance_A,
+    'edge_enhance_B':edge_enhance_B,
+    'edge_enhance_t':edge_enhance_t,
+    'edge_enhance_Ib':edge_enhance_Ib,
+    'edge_enhance_init':edge_enhance_init,
 
     'saved_A': saved_A,
     'saved_B': saved_B,

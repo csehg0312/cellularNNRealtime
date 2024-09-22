@@ -19,85 +19,83 @@ dist_path = Path(__file__).parent / "dist"
 pcs = set()
 relay = MediaRelay()
 
+import gc
+
 async def handle_upload(request):
     try:
         # Reading the multipart data
         reader = await request.multipart()
         field = await reader.next()
 
-        # Check if the field is actually an uploaded file
+        # Validate uploaded file
         if field.name != 'file':
             return web.Response(status=400, text="No file uploaded")
 
         print("Image received")
 
-        # Read the data from the field
+        # Read the raw binary data from the field in one go
         data = await field.read(decode=True)
-        
-        # Convert data to string to strip the base64 header
-        data_str = data.decode('utf-8')
-        
-        # Check for the base64 header and strip it
-        if data_str.startswith('data:image'):
-            # Strip the data URL prefix
-            base64_data = data_str.split(',')[1]
-        else:
-            return web.Response(status=400, text="Invalid image format")
 
-        # Decode the Base64 string to raw image bytes
-        image_data = base64.b64decode(base64_data)
-        
-        # Convert the binary data to a numpy array
-        np_array = np.frombuffer(image_data, np.uint8)
+        # Base64 decoding (optimized, avoid intermediate string creation)
+        try:
+            if data.startswith(b'data:image'):
+                base64_start = data.find(b',') + 1
+                image_data = base64.b64decode(data[base64_start:])  # Directly decode from bytes
+            else:
+                return web.Response(status=400, text="Invalid image format")
 
-        # Decode the numpy array into an image
-        image = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        
-        if image is None:
-            print("Error: Unable to decode image. The file may be invalid or unsupported.")
-            return web.Response(status=400, text="Invalid image file")
-        
-        print("Image successfully decoded")
+            # Decode the binary data into a numpy array
+            np_array = np.frombuffer(image_data, np.uint8)
 
-        # Read the selected size field
+            # Decode the numpy array into an image
+            image = cv2.imdecode(np_array, cv2.IMREAD_GRAYSCALE)
+
+            if image is None:
+                return web.Response(status=400, text="Invalid image file")
+            
+            print("Image successfully decoded")
+
+        finally:
+            # Free memory of intermediate variables
+            del data, image_data, np_array
+            gc.collect()
+
+        # Process additional fields in the form
         fields = {}
         while True:
             field = await reader.next()
             if field is None:
                 break
-            
             if field.name in ['keep_original_size', 'size', 'invert_size', 'mode']:
                 value = await field.read(decode=True)
-                value = value.decode('utf-8')
-                fields[field.name] = value
-            else:
-                break
+                fields[field.name] = value.decode('utf-8')
 
-        print(fields)
-        keep_original_size = fields.get('keep_original_size')
+        # Handle image resizing logic if needed
+        keep_original_size = fields.get('keep_original_size', 'true').lower()
         selected_size = fields.get('size')
-        invert_size = fields.get('invert_size')
-        selected_mode = fields.get('mode', 'default_mode_')
-        
-        if keep_original_size.lower() == 'false':
-            # Resize the image based on the selected size
+        invert_size = fields.get('invert_size', 'false').lower()
+
+        if keep_original_size == 'false' and selected_size:
             width, height = map(int, selected_size.split('x'))
-            if invert_size.lower() == 'true':
-                width, height = height, width  # invert sizes
+            if invert_size == 'true':
+                width, height = height, width  # Swap width and height
             image = cv2.resize(image, (width, height))
-        # Call the Julia ODE solver via the cnnCall function
-        processed_image = cnnCall(image, selected_mode)
 
-        # Encode the processed image back to bytes
+        # Perform image processing (calls a Julia ODE solver)
+        processed_image = cnnCall(image, fields.get('mode', 'default_mode_'))
+
+        # Encode the processed image back to PNG format
         success, encoded_image = cv2.imencode('.png', processed_image)
-
         if not success:
             return web.Response(status=500, text="Failed to encode image")
 
         print("Image successfully processed and encoded")
 
-        # Return the processed image
+        # Cleanup processed image
+        del processed_image, image
+        gc.collect()
+
+        # Return the processed image as a response
         return web.Response(body=encoded_image.tobytes(), content_type='image/png')
 
     except Exception as e:
