@@ -30,6 +30,14 @@ function Navbar() {
               Paraméterek létrehozása
             </a>
           </li>
+          <li>
+            <a
+              href="/licenses"
+              className="border-b-2 pb-2 transition-colors text-custom-white hover:text-custom-deepOrange border-custom-graphite hover:border-custom-tangerine"
+            >
+              Licenses
+            </a>
+          </li>
         </ul>
       </div>
     </nav>

@@ -8,14 +8,9 @@ const Home = lazy(() => import('./pages/Home'));
 const STX = lazy(() => import('./pages/STX'));
 const PhotoCNN = lazy(() => import('./pages/PhotoCNN'));
 const VideoCNN = lazy(() => import('./pages/VideoCNN'));
+const Licenses = lazy(() => import('./pages/Licenses'));
 
-// Define the root App component that wraps the children
-const App = (props) => (
-  <>
-    <h1>My Application</h1>
-    {props.children}
-  </>
-);
+// Define the root App component that wraps the children;
 
 // Render the application with the Router and Routes
 render(() => (
@@ -24,5 +19,6 @@ render(() => (
     <Route path="/videocnn" component={VideoCNN} />
     <Route path="/photocnn" component={PhotoCNN} />
     <Route path="/stx" component={STX} />
+    <Route path="/licenses" component={Licenses} />
   </Router>
 ), document.getElementById("root"));
